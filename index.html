@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Attention Adjustments — Prototypes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #F9FAFB;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .header-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #4F6BED;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.25;
+      margin-bottom: 16px;
+    }
+
+    .header-desc {
+      font-size: 16px;
+      color: #6B7280;
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    .cards {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 16px;
+      padding: 40px 36px;
+      width: 380px;
+      text-decoration: none;
+      transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card:hover {
+      box-shadow: 0 12px 40px rgba(79, 107, 237, 0.12);
+      transform: translateY(-3px);
+      border-color: #C7D2FE;
+    }
+
+    .card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+
+    .badge-blue {
+      background: #EEF2FF;
+      color: #4F6BED;
+    }
+
+    .card-number {
+      font-size: 12px;
+      font-weight: 600;
+      color: #9CA3AF;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.3;
+    }
+
+    .card-description {
+      font-size: 14px;
+      color: #6B7280;
+      line-height: 1.65;
+    }
+
+    .card-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-features li {
+      font-size: 13px;
+      color: #374151;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.4;
+    }
+
+    .card-features li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: #4F6BED;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    .card-cta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #4F6BED;
+      margin-top: 4px;
+    }
+
+    .card-cta svg {
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover .card-cta svg {
+      transform: translateX(4px);
+    }
+
+    .divider {
+      width: 1px;
+      background: #E5E7EB;
+      align-self: stretch;
+    }
+
+    .footer {
+      margin-top: 60px;
+      font-size: 13px;
+      color: #9CA3AF;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-eyebrow">Interactive Prototypes</div>
+    <h1>Attention Adjustments</h1>
+    <p class="header-desc">
+      Two approaches to surfacing attention-adjusted media values in the channel allocation table. Select a prototype to explore.
+    </p>
+  </div>
+
+  <div class="cards">
+    <a class="card" href="solution-1/index.html">
+      <div>
+        <span class="card-number">Solution 1</span>
+      </div>
+      <div class="card-title">Replace Values + Export</div>
+      <p class="card-description">
+        Adjusted values replace originals directly in the table. Cost &amp; Weight stay original; Cum. Reach &amp; Decay show adjusted values in blue. Full data accessible via Excel export.
+      </p>
+      <ul class="card-features">
+        <li>Adjusted Cum. Reach &amp; Decay shown in blue bold</li>
+        <li>Original Cost &amp; Weight always visible</li>
+        <li>Export .xlsx with all original + adjusted columns</li>
+        <li>Cleaner table — same width as original</li>
+      </ul>
+      <span class="card-badge badge-blue">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="#4F6BED" stroke-width="1.5"/><path d="M5 3v2.5l1.5 1" stroke="#4F6BED" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Attention ADJ.
+      </span>
+      <div class="card-cta">
+        Open prototype
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#4F6BED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </a>
+
+    <a class="card" href="solution-2/index.html">
+      <div>
+        <span class="card-number">Solution 2</span>
+      </div>
+      <div class="card-title">Side-by-Side Columns</div>
+      <p class="card-description">
+        Adjusted columns appear adjacent to each original column when the toggle is ON. Both original and adjusted values visible simultaneously for direct comparison.
+      </p>
+      <ul class="card-features">
+        <li>4 new ADJ. columns with blue styling fade in</li>
+        <li>Original columns remain fully visible</li>
+        <li>Direct side-by-side comparison</li>
+        <li>Wider table — ideal for detailed analysis</li>
+      </ul>
+      <span class="card-badge badge-blue">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="#4F6BED" stroke-width="1.5"/><path d="M5 3v2.5l1.5 1" stroke="#4F6BED" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Attention ADJ.
+      </span>
+      <div class="card-cta">
+        Open prototype
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#4F6BED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </a>
+  </div>
+
+  <div class="footer">Planning Agent Team · v1.1 · 2026-05-19</div>
+
+</body>
+</html>
