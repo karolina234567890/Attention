@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1440" />
+  <title>Solution 2 — Side-by-Side Columns | Attention Adjustments</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #F9FAFB;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Back link */
+    .back-link {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 1000;
+      font-size: 12px;
+      color: #9CA3AF;
+      text-decoration: none;
+      background: rgba(255,255,255,0.9);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid #E5E7EB;
+      backdrop-filter: blur(4px);
+      transition: color 150ms ease, border-color 150ms ease;
+    }
+    .back-link:hover { color: #374151; border-color: #D1D5DB; }
+
+    /* App shell */
+    .app-shell {
+      display: flex;
+      flex-direction: row;
+      min-height: 100vh;
+      width: 100%;
+      min-width: 1440px;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 240px;
+      min-width: 240px;
+      background: #1E2433;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      transition: width 300ms ease, min-width 300ms ease;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .sidebar.collapsed {
+      width: 48px;
+      min-width: 48px;
+    }
+
+    .sidebar-header {
+      padding: 28px 20px 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .sidebar-header .sidebar-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #4F6BED;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .sidebar-header .sidebar-logo svg {
+      width: 16px;
+      height: 16px;
+    }
+    .sidebar-title-block {
+      overflow: hidden;
+      transition: opacity 300ms ease;
+    }
+    .sidebar.collapsed .sidebar-title-block { opacity: 0; pointer-events: none; }
+    .sidebar-media-plan {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6B7A99;
+    }
+    .sidebar-scenario {
+      font-size: 13px;
+      font-weight: 600;
+      color: #E2E8F0;
+      margin-top: 1px;
+      white-space: nowrap;
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      background: #2D3548;
+      margin: 14px 0;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 0 8px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      transition: background 150ms ease;
+      text-decoration: none;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.07); }
+    .nav-item.active { background: rgba(79,107,237,0.25); }
+    .nav-item .nav-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-item .nav-icon svg { width: 16px; height: 16px; }
+    .nav-item.active .nav-icon svg { color: #7B93F5; }
+    .nav-item:not(.active) .nav-icon svg { color: #6B7A99; }
+    .nav-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #CBD5E1;
+      transition: opacity 300ms ease;
+    }
+    .nav-item.active .nav-label { color: #A5B4FC; font-weight: 600; }
+    .sidebar.collapsed .nav-label { opacity: 0; }
+
+    /* ── Main content ── */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    /* ── Top Toolbar ── */
+    .toolbar {
+      background: #fff;
+      border-bottom: 1px solid #E5E7EB;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .toolbar-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .breadcrumb {
+      font-size: 12px;
+      color: #9CA3AF;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .breadcrumb span.bc-sep { color: #D1D5DB; }
+    .breadcrumb span:last-child { color: #374151; font-weight: 500; }
+
+    .scenario-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .scenario-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+    }
+    .scenario-subtitle {
+      font-size: 12px;
+      color: #9CA3AF;
+      font-weight: 400;
+    }
+    .badge-attention {
+      background: #EEF2FF;
+      color: #4F6BED;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 20px;
+      opacity: 0;
+      transition: opacity 300ms ease;
+      pointer-events: none;
+    }
+    .badge-attention.visible { opacity: 1; pointer-events: auto; }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Toggle control */
+    .toggle-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toggle-label-wrap {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .toggle-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      white-space: nowrap;
+    }
+    .info-icon {
+      width: 16px;
+      height: 16px;
+      color: #9CA3AF;
+      cursor: default;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .info-icon svg { width: 14px; height: 14px; }
+    .tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 6px);
+      right: 0;
+      background: #1E2433;
+      color: #E2E8F0;
+      font-size: 11.5px;
+      line-height: 1.5;
+      padding: 8px 12px;
+      border-radius: 8px;
+      width: 260px;
+      pointer-events: none;
+      z-index: 99;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    }
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      right: 8px;
+      border: 6px solid transparent;
+      border-top-color: #1E2433;
+    }
+    .info-icon:hover .tooltip { display: block; }
+
+    /* Toggle switch */
+    .toggle-switch {
+      width: 40px;
+      height: 22px;
+      border-radius: 11px;
+      background: #D1D5DB;
+      position: relative;
+      cursor: pointer;
+      transition: background 300ms ease;
+      flex-shrink: 0;
+    }
+    .toggle-switch.on { background: #4F6BED; }
+    .toggle-switch::after {
+      content: '';
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: left 300ms ease;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    }
+    .toggle-switch.on::after { left: 20px; }
+
+    /* Manage columns button */
+    .btn-manage-cols {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      background: #fff;
+      color: #374151;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 150ms ease, border-color 150ms ease;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-manage-cols:hover { background: #F9FAFB; border-color: #9CA3AF; }
+    .btn-manage-cols svg { width: 14px; height: 14px; color: #6B7280; }
+
+    /* ── Page body ── */
+    .page-body {
+      flex: 1;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      overflow-y: auto;
+    }
+
+    /* ── Table card ── */
+    .card {
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #E5E7EB;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+    }
+    .card-subtitle {
+      font-size: 12px;
+      color: #9CA3AF;
+      margin-top: 1px;
+    }
+
+    /* Table wrapper */
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead th {
+      background: #F9FAFB;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6B7280;
+      border-bottom: 1px solid #E5E7EB;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    thead th.th-adj {
+      background: #EEF2FF;
+      color: #4F6BED;
+    }
+    thead th.th-adj .adj-pill {
+      display: inline-block;
+      background: #C7D2FE;
+      color: #4F6BED;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 1px 5px;
+      border-radius: 10px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #F3F4F6;
+      transition: background 150ms ease;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #F9FAFB; }
+
+    td {
+      padding: 11px 14px;
+      color: #374151;
+      font-size: 13px;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    /* Channel cell */
+    td.td-channel {
+      font-weight: 600;
+      color: #111827;
+    }
+    .channel-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      margin-right: 8px;
+      font-size: 13px;
+      vertical-align: middle;
+      background: #F3F4F6;
+    }
+
+    /* De-emphasized cells when toggle ON */
+    td.de-emph {
+      color: #9CA3AF;
+    }
+
+    /* ADJ cells */
+    td.td-adj {
+      color: #4F6BED;
+      font-weight: 700;
+      border-left: 1.5px solid #C7D2FE;
+    }
+    td.td-adj.no-att {
+      color: #9CA3AF;
+      font-weight: 400;
+    }
+
+    /* ADJ header border */
+    thead th.th-adj {
+      border-left: 1.5px solid #C7D2FE;
+    }
+
+    /* Metric badge */
+    .metric-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 500;
+      color: #9CA3AF;
+      background: #F3F4F6;
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+    td.td-adj .metric-badge {
+      background: #EEF2FF;
+      color: #818CF8;
+    }
+
+    /* Threshold dropdown */
+    .threshold-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background: #F9FAFB url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%236B7280' d='M1 3l4 4 4-4z'/%3E%3C/svg%3E") no-repeat right 8px center;
+      border: 1px solid #E5E7EB;
+      border-radius: 6px;
+      padding: 4px 24px 4px 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #374151;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 150ms ease;
+    }
+    .threshold-select:hover { border-color: #9CA3AF; }
+    .threshold-select:focus { outline: none; border-color: #4F6BED; box-shadow: 0 0 0 3px rgba(79,107,237,0.15); }
+
+    /* NO ATTENTION badge */
+    .no-att-badge {
+      display: inline-block;
+      background: #E5E7EB;
+      color: #6B7280;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ADJ columns animation */
+    .col-adj {
+      overflow: hidden;
+      max-width: 0;
+      opacity: 0;
+      transition: max-width 300ms ease, opacity 300ms ease;
+    }
+    .col-adj.visible {
+      max-width: 200px;
+      opacity: 1;
+    }
+
+    /* We control visibility via a class on the table wrapper */
+    .table-wrap table .adj-col {
+      display: none;
+    }
+    .table-wrap.attention-on table .adj-col {
+      display: table-cell;
+    }
+    /* Fade-in for adj cells */
+    .table-wrap.attention-on table .adj-col {
+      animation: fadeInCol 300ms ease both;
+    }
+    @keyframes fadeInCol {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* Totals footer row */
+    tfoot tr td {
+      background: #F9FAFB;
+      font-weight: 600;
+      color: #111827;
+      border-top: 2px solid #E5E7EB;
+      padding: 10px 14px;
+    }
+    tfoot tr td.td-adj {
+      color: #4F6BED;
+    }
+    tfoot tr td.de-emph {
+      color: #9CA3AF;
+    }
+
+    /* ── Flighting Summary ── */
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .segmented-control {
+      display: inline-flex;
+      background: #F3F4F6;
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+    }
+    .seg-btn {
+      padding: 5px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #6B7280;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      transition: background 150ms ease, color 150ms ease, box-shadow 150ms ease;
+      white-space: nowrap;
+    }
+    .seg-btn.active {
+      background: #fff;
+      color: #111827;
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    .kpi-card {
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #9CA3AF;
+      margin-bottom: 8px;
+    }
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1;
+    }
+    .kpi-value.adj { color: #4F6BED; }
+    .kpi-adj-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #4F6BED;
+      margin-top: 4px;
+      opacity: 0;
+      transition: opacity 300ms ease;
+    }
+    .kpi-adj-label.visible { opacity: 1; }
+    .kpi-orig-value {
+      font-size: 12px;
+      color: #9CA3AF;
+      margin-top: 3px;
+      display: none;
+    }
+    .attention-on-state .kpi-orig-value { display: block; }
+
+    /* Channels KPI table */
+    .kpi-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .kpi-table thead th {
+      background: #F9FAFB;
+      padding: 9px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6B7280;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .kpi-table thead th.th-adj {
+      background: #EEF2FF;
+      color: #4F6BED;
+      border-left: 1.5px solid #C7D2FE;
+    }
+    .kpi-table tbody td {
+      padding: 10px 14px;
+      color: #374151;
+      border-bottom: 1px solid #F3F4F6;
+    }
+    .kpi-table tbody tr:last-child td { border-bottom: none; }
+    .kpi-table tbody td.td-adj-kpi {
+      color: #4F6BED;
+      font-weight: 700;
+      border-left: 1.5px solid #C7D2FE;
+    }
+    .kpi-table tbody td.de-emph { color: #9CA3AF; }
+    .kpi-table .no-att-cell { color: #9CA3AF; }
+    .kpi-table tbody tr:hover { background: #F9FAFB; }
+
+    /* ── Flighting Graph ── */
+    .chart-container {
+      padding: 16px 0 8px;
+      overflow: hidden;
+    }
+    .chart-svg {
+      width: 100%;
+    }
+
+    /* Panel headers */
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    /* Hidden utility */
+    .hidden { display: none !important; }
+
+    /* Totals row label */
+    .totals-label { font-weight: 700; color: #111827; }
+
+  </style>
+</head>
+<body>
+
+<a href="../index.html" class="back-link">← Back to index</a>
+
+<div class="app-shell">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="5" height="5" rx="1.5" fill="white" fill-opacity="0.9"/>
+          <rect x="9" y="2" width="5" height="5" rx="1.5" fill="white" fill-opacity="0.5"/>
+          <rect x="2" y="9" width="5" height="5" rx="1.5" fill="white" fill-opacity="0.5"/>
+          <rect x="9" y="9" width="5" height="5" rx="1.5" fill="white" fill-opacity="0.9"/>
+        </svg>
+      </div>
+      <div class="sidebar-title-block">
+        <div class="sidebar-media-plan">Media Plan</div>
+        <div class="sidebar-scenario">Q3 2026 National</div>
+      </div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item active" href="#">
+        <span class="nav-icon">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1"/>
+            <rect x="9" y="1.5" width="5.5" height="5.5" rx="1"/>
+            <rect x="1.5" y="9" width="5.5" height="5.5" rx="1"/>
+            <rect x="9" y="9" width="5.5" height="5.5" rx="1"/>
+          </svg>
+        </span>
+        <span class="nav-label">Channel Allocation</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="8" cy="8" r="6"/>
+            <path d="M8 5v3l2 2"/>
+          </svg>
+        </span>
+        <span class="nav-label">Budget Overview</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M2 12 C4 8, 6 4, 8 5 S12 10, 14 6"/>
+          </svg>
+        </span>
+        <span class="nav-label">Reach Curves</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="2" y="4" width="12" height="10" rx="1"/>
+            <path d="M5 4V2.5M11 4V2.5"/>
+            <path d="M2 7h12"/>
+          </svg>
+        </span>
+        <span class="nav-label">Flighting</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="2.5" y="1.5" width="11" height="13" rx="1.5"/>
+            <path d="M5 5.5h6M5 8h6M5 10.5h4"/>
+          </svg>
+        </span>
+        <span class="nav-label">Reports</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- ── Main ── -->
+  <div class="main-content">
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="breadcrumb">
+          <span>Media Plans</span>
+          <span class="bc-sep">/</span>
+          <span>Q3 2026 National</span>
+          <span class="bc-sep">/</span>
+          <span>Channel Allocation</span>
+        </div>
+        <div class="scenario-line">
+          <span class="scenario-name">Q3 2026 National</span>
+          <span class="scenario-subtitle">Base Scenario</span>
+          <span class="badge-attention" id="attBadge">ATTENTION ADJ.</span>
+        </div>
+      </div>
+      <div class="toolbar-right">
+        <div class="toggle-control">
+          <div class="toggle-label-wrap">
+            <span class="toggle-label">Attention Adjustment</span>
+            <div class="info-icon">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="8" cy="8" r="6.5"/>
+                <path d="M8 7v5M8 5.5v-.5" stroke-linecap="round"/>
+              </svg>
+              <div class="tooltip">Applies Lumen attention data to adjust reach and decay metrics based on the selected threshold per channel.</div>
+            </div>
+          </div>
+          <div class="toggle-switch" id="attToggle" role="switch" aria-checked="false" tabindex="0"></div>
+        </div>
+        <button class="btn-manage-cols">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M1 4h12M1 7h12M1 10h12" stroke-linecap="round"/>
+            <circle cx="4" cy="4" r="1.5" fill="white" stroke="currentColor" stroke-width="1.3"/>
+            <circle cx="9" cy="7" r="1.5" fill="white" stroke="currentColor" stroke-width="1.3"/>
+            <circle cx="5" cy="10" r="1.5" fill="white" stroke="currentColor" stroke-width="1.3"/>
+          </svg>
+          Manage Columns
+        </button>
+      </div>
+    </div>
+
+    <!-- Page body -->
+    <div class="page-body" id="pageBody">
+
+      <!-- ── Channel Allocation Table Card ── -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Channel Allocation</div>
+            <div class="card-subtitle">Q3 2026 · 10 channels · $5,450,000 total budget</div>
+          </div>
+        </div>
+        <div class="table-wrap" id="tableWrap">
+          <table id="mainTable">
+            <thead>
+              <tr>
+                <th style="min-width:140px">Channel</th>
+                <th class="adj-col" style="min-width:130px">Attention Threshold</th>
+                <th id="thCost" style="min-width:110px">Cost</th>
+                <th class="adj-col th-adj" style="min-width:120px">Cost ADJ. <span class="adj-pill">ADJ</span></th>
+                <th id="thWeight" style="min-width:110px">Weight</th>
+                <th class="adj-col th-adj" style="min-width:120px">Weight ADJ. <span class="adj-pill">ADJ</span></th>
+                <th style="min-width:100px">Budget Share %</th>
+                <th style="min-width:110px">Budget</th>
+                <th id="thReach" style="min-width:120px">Cum. Reach @1+</th>
+                <th class="adj-col th-adj" style="min-width:140px">Cum. Reach ADJ. <span class="adj-pill">ADJ</span></th>
+                <th id="thDecay" style="min-width:150px">Reach w. Decay @1+</th>
+                <th class="adj-col th-adj" style="min-width:150px">Decay ADJ. <span class="adj-pill">ADJ</span></th>
+                <th style="min-width:110px">Revenue</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- rows inserted by JS -->
+            </tbody>
+            <tfoot id="tableFoot">
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Flighting Summary Card ── -->
+      <div class="card">
+        <div class="card-header">
+          <div class="section-title">Flighting Summary</div>
+          <div class="segmented-control">
+            <button class="seg-btn active" data-panel="totals" id="segTotals">KPIs by Totals</button>
+            <button class="seg-btn" data-panel="channels" id="segChannels">KPIs by Channels</button>
+          </div>
+        </div>
+
+        <!-- KPIs by Totals -->
+        <div id="panelTotals" style="padding:20px">
+          <div class="kpi-grid" id="kpiGrid">
+            <!-- KPI cards rendered by JS -->
+          </div>
+        </div>
+
+        <!-- KPIs by Channels -->
+        <div id="panelChannels" class="hidden">
+          <div class="table-wrap" id="kpiTableWrap">
+            <table class="kpi-table" id="kpiTable">
+              <thead>
+                <tr>
+                  <th>Channel</th>
+                  <th id="kpiThReach">Cum. Reach @1+</th>
+                  <th class="adj-col th-adj" id="kpiThReachAdj">Cum. Reach ADJ.</th>
+                  <th id="kpiThDecay">Reach w. Decay @1+</th>
+                  <th class="adj-col th-adj" id="kpiThDecayAdj">Reach w. Decay ADJ.</th>
+                </tr>
+              </thead>
+              <tbody id="kpiTableBody">
+                <!-- rows inserted by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Flighting Graph Card ── -->
+      <div class="card">
+        <div class="card-header">
+          <div class="section-title">Flighting</div>
+          <div class="segmented-control">
+            <button class="seg-btn active" data-chart="budget" id="segBudget">Budget</button>
+            <button class="seg-btn" data-chart="weight" id="segWeight">Weight</button>
+            <button class="seg-btn" data-chart="adstock" id="segAdstock">Weight + Adstock</button>
+          </div>
+        </div>
+        <div class="chart-container" style="padding:20px 24px 16px">
+          <svg id="chartSvg" class="chart-svg" height="240" viewBox="0 0 900 240" preserveAspectRatio="xMidYMid meet">
+          </svg>
+        </div>
+      </div>
+
+    </div><!-- /page-body -->
+  </div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<script>
+(function() {
+  'use strict';
+
+  // ── Data ──
+  const CHANNELS = [
+    { name: 'Audio',        emoji: '🎵', threshold: '1 SEC', costOrig: 45.32, costAdj1: 40.30, costUnit: 'CPP', weightOrig: 23456, weightAdj1: 20500, weightUnit: 'GRP', cumReachOrig: 30.0, cumReachAdj1: 30.0, decayOrig: 30.0, decayAdj1: 30.0, budget: 1500000, budgetShare: '27.5%', revenue: 2100000 },
+    { name: 'Direct',       emoji: '📬', threshold: '1 SEC', costOrig: 68.89, costAdj1: 58.56, costUnit: 'CPP', weightOrig: 65432, weightAdj1: 55617, weightUnit: 'GRP', cumReachOrig: 20.0, cumReachAdj1: 17.0, decayOrig: 20.0, decayAdj1: 17.0, budget: 1000000, budgetShare: '18.3%', revenue: 1380000 },
+    { name: 'Display',      emoji: '🖥', threshold: '1 SEC', costOrig: 88.90, costAdj1: 75.56, costUnit: 'CPM', weightOrig: 98765, weightAdj1: 83950, weightUnit: 'IMP', cumReachOrig: 16.0, cumReachAdj1: 13.6, decayOrig: 16.0, decayAdj1: 13.6, budget: 800000, budgetShare: '14.7%', revenue: 720000 },
+    { name: 'OOH',          emoji: '🏙', threshold: '1 SEC', costOrig: 84.76, costAdj1: 72.05, costUnit: 'CPP', weightOrig: 43210, weightAdj1: 36729, weightUnit: 'GRP', cumReachOrig: 15.0, cumReachAdj1: 12.8, decayOrig: 15.0, decayAdj1: 12.8, budget: 750000, budgetShare: '13.8%', revenue: 890000 },
+    { name: 'Print',        emoji: '📰', threshold: '1 SEC', costOrig: 57.23, costAdj1: 48.65, costUnit: 'CPP', weightOrig: 87654, weightAdj1: 74506, weightUnit: 'GRP', cumReachOrig: 10.0, cumReachAdj1: 8.5,  decayOrig: 10.0, decayAdj1: 8.5,  budget: 500000, budgetShare: '9.2%',  revenue: 610000 },
+    { name: 'Retail',       emoji: '🛒', threshold: '1 SEC', costOrig: 99.99, costAdj1: 84.99, costUnit: 'CPP', weightOrig: 34567, weightAdj1: 29382, weightUnit: 'GRP', cumReachOrig: 6.0,  cumReachAdj1: 5.1,  decayOrig: 6.0,  decayAdj1: 5.1,  budget: 300000, budgetShare: '5.5%',  revenue: 340000 },
+    { name: 'Search',       emoji: '🔍', threshold: 'NO_ATT', costOrig: 21.67, costAdj1: null, costUnit: 'CPP', weightOrig: 56789, weightAdj1: null, weightUnit: 'GRP', cumReachOrig: 3.0, cumReachAdj1: null, decayOrig: 3.0, decayAdj1: null, budget: 150000, budgetShare: '2.8%', revenue: 210000 },
+    { name: 'Social',       emoji: '📱', threshold: '1 SEC', costOrig: 92.45, costAdj1: 78.58, costUnit: 'CPP', weightOrig: 78901, weightAdj1: 67066, weightUnit: 'GRP', cumReachOrig: 3.0, cumReachAdj1: 2.5, decayOrig: 3.0, decayAdj1: 2.5, budget: 150000, budgetShare: '2.8%', revenue: 195000 },
+    { name: 'Online Video', emoji: '▶️', threshold: '1 SEC', costOrig: 73.54, costAdj1: 62.51, costUnit: 'CPP', weightOrig: 12345, weightAdj1: 10493, weightUnit: 'GRP', cumReachOrig: 3.0, cumReachAdj1: 2.5, decayOrig: 3.0, decayAdj1: 2.5, budget: 150000, budgetShare: '2.8%', revenue: 180000 },
+    { name: 'TV-Streaming', emoji: '📺', threshold: '1 SEC', costOrig: 39.12, costAdj1: 33.25, costUnit: 'CPP', weightOrig: 98765, weightAdj1: 83950, weightUnit: 'GRP', cumReachOrig: 3.0, cumReachAdj1: 2.5, decayOrig: 3.0, decayAdj1: 2.5, budget: 150000, budgetShare: '2.8%', revenue: 220000 },
+  ];
+
+  const SCALE_FACTORS = {
+    '1 SEC': 1.0,
+    '2 SEC': 0.85,
+    '3 SEC': 0.70,
+    '5 SEC': 0.55,
+    '10 SEC': 0.35,
+    '20 SEC': 0.15,
+  };
+
+  const THRESHOLD_OPTIONS = ['1 SEC', '2 SEC', '3 SEC', '5 SEC', '10 SEC', '20 SEC'];
+
+  // Per-row threshold state
+  const rowThresholds = CHANNELS.map(ch => ch.threshold === 'NO_ATT' ? 'NO_ATT' : '1 SEC');
+
+  // Current chart metric
+  let chartMetric = 'budget';
+
+  // Toggle state
+  let attentionOn = false;
+
+  // Current flighting panel
+  let flightingPanel = 'totals';
+
+  // Computed adj values per row given threshold
+  function getAdj(ch, idx) {
+    if (ch.threshold === 'NO_ATT') return { costAdj: null, weightAdj: null, cumReachAdj: null, decayAdj: null };
+    const thr = rowThresholds[idx];
+    const scale = SCALE_FACTORS[thr] ?? 1.0;
+    // adjValue = origValue + (baseAdj1sec - origValue) * scale
+    const costAdj   = ch.costOrig   + (ch.costAdj1   - ch.costOrig)   * scale;
+    const weightAdj = ch.weightOrig + (ch.weightAdj1 - ch.weightOrig) * scale;
+    const cumReachAdj = ch.cumReachOrig + (ch.cumReachAdj1 - ch.cumReachOrig) * scale;
+    const decayAdj    = ch.decayOrig    + (ch.decayAdj1    - ch.decayOrig)    * scale;
+    return { costAdj, weightAdj, cumReachAdj, decayAdj };
+  }
+
+  // Format helpers
+  function fmtMoney(v) { return '$' + v.toLocaleString('en-US'); }
+  function fmtComma(v) { return Math.round(v).toLocaleString('en-US'); }
+  function fmtDec1(v)  { return v.toFixed(1) + '%'; }
+  function fmtCost(v)  { return v.toFixed(2); }
+
+  // ── Build table rows ──
+  function buildTableRows() {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+
+    CHANNELS.forEach((ch, idx) => {
+      const isNoAtt = ch.threshold === 'NO_ATT';
+      const adj = getAdj(ch, idx);
+      const tr = document.createElement('tr');
+
+      // Channel
+      tr.innerHTML += `<td class="td-channel"><span class="channel-icon">${ch.emoji}</span>${ch.name}</td>`;
+
+      // Attention Threshold (adj-col)
+      if (isNoAtt) {
+        tr.innerHTML += `<td class="adj-col"><span class="no-att-badge">NO ATTENTION</span></td>`;
+      } else {
+        const opts = THRESHOLD_OPTIONS.map(o => `<option value="${o}"${o === rowThresholds[idx] ? ' selected' : ''}>${o}</option>`).join('');
+        tr.innerHTML += `<td class="adj-col"><select class="threshold-select" data-row="${idx}">${opts}</select></td>`;
+      }
+
+      // Cost (original — de-emphasised when attention on)
+      tr.innerHTML += `<td class="orig-cost ${attentionOn ? 'de-emph' : ''}">${fmtCost(ch.costOrig)}<span class="metric-badge">${ch.costUnit}</span></td>`;
+
+      // Cost ADJ. (adj-col)
+      if (isNoAtt) {
+        tr.innerHTML += `<td class="adj-col td-adj no-att">—</td>`;
+      } else {
+        tr.innerHTML += `<td class="adj-col td-adj">${fmtCost(adj.costAdj)}<span class="metric-badge">${ch.costUnit}</span></td>`;
+      }
+
+      // Weight (original — de-emphasised when attention on)
+      tr.innerHTML += `<td class="orig-weight ${attentionOn ? 'de-emph' : ''}">${fmtComma(ch.weightOrig)}<span class="metric-badge">${ch.weightUnit}</span></td>`;
+
+      // Weight ADJ. (adj-col)
+      if (isNoAtt) {
+        tr.innerHTML += `<td class="adj-col td-adj no-att">—</td>`;
+      } else {
+        tr.innerHTML += `<td class="adj-col td-adj">${fmtComma(adj.weightAdj)}<span class="metric-badge">${ch.weightUnit}</span></td>`;
+      }
+
+      // Budget Share
+      tr.innerHTML += `<td>${ch.budgetShare}</td>`;
+
+      // Budget
+      tr.innerHTML += `<td>${fmtMoney(ch.budget)}</td>`;
+
+      // Cum. Reach (original)
+      tr.innerHTML += `<td class="orig-reach ${attentionOn ? 'de-emph' : ''}">${fmtDec1(ch.cumReachOrig)}</td>`;
+
+      // Cum. Reach ADJ. (adj-col)
+      if (isNoAtt) {
+        tr.innerHTML += `<td class="adj-col td-adj no-att">—</td>`;
+      } else {
+        tr.innerHTML += `<td class="adj-col td-adj">${fmtDec1(adj.cumReachAdj)}</td>`;
+      }
+
+      // Reach w. Decay (original)
+      tr.innerHTML += `<td class="orig-decay ${attentionOn ? 'de-emph' : ''}">${fmtDec1(ch.decayOrig)}</td>`;
+
+      // Decay ADJ. (adj-col)
+      if (isNoAtt) {
+        tr.innerHTML += `<td class="adj-col td-adj no-att">—</td>`;
+      } else {
+        tr.innerHTML += `<td class="adj-col td-adj">${fmtDec1(adj.decayAdj)}</td>`;
+      }
+
+      // Revenue
+      tr.innerHTML += `<td>${fmtMoney(ch.revenue)}</td>`;
+
+      tbody.appendChild(tr);
+    });
+
+    // Bind threshold dropdowns
+    document.querySelectorAll('.threshold-select').forEach(sel => {
+      sel.addEventListener('change', function() {
+        const rowIdx = parseInt(this.dataset.row);
+        rowThresholds[rowIdx] = this.value;
+        rebuildAdjCells(rowIdx);
+        updateKPIs();
+      });
+    });
+
+    buildTotalsRow();
+  }
+
+  function rebuildAdjCells(rowIdx) {
+    const ch = CHANNELS[rowIdx];
+    const adj = getAdj(ch, rowIdx);
+    const rows = document.querySelectorAll('#tableBody tr');
+    const tr = rows[rowIdx];
+    if (!tr) return;
+    const adjCells = tr.querySelectorAll('.td-adj');
+    // adjCells: [costAdj, weightAdj, cumReachAdj, decayAdj]
+    if (adjCells.length < 4) return;
+    if (ch.threshold !== 'NO_ATT') {
+      adjCells[0].innerHTML = `${fmtCost(adj.costAdj)}<span class="metric-badge">${ch.costUnit}</span>`;
+      adjCells[1].innerHTML = `${fmtComma(adj.weightAdj)}<span class="metric-badge">${ch.weightUnit}</span>`;
+      adjCells[2].textContent = fmtDec1(adj.cumReachAdj);
+      adjCells[3].textContent = fmtDec1(adj.decayAdj);
+    }
+    buildTotalsRow();
+  }
+
+  function buildTotalsRow() {
+    const tfoot = document.getElementById('tableFoot');
+    tfoot.innerHTML = '';
+    const tr = document.createElement('tr');
+
+    // Totals
+    const totalBudget  = CHANNELS.reduce((s, c) => s + c.budget, 0);
+    const totalRevenue = CHANNELS.reduce((s, c) => s + c.revenue, 0);
+
+    // Weighted avg reach (sum weighted by budget share as fraction)
+    const totalBudgetVal = CHANNELS.reduce((s, c) => s + c.budget, 0);
+    const wReachOrig = CHANNELS.reduce((s, c, i) => s + c.cumReachOrig * (c.budget / totalBudgetVal), 0);
+    const wDecayOrig = CHANNELS.reduce((s, c, i) => s + c.decayOrig * (c.budget / totalBudgetVal), 0);
+    // ADJ totals
+    const wReachAdj = CHANNELS.reduce((s, c, i) => {
+      if (c.threshold === 'NO_ATT') return s + c.cumReachOrig * (c.budget / totalBudgetVal);
+      const adj = getAdj(c, i);
+      return s + adj.cumReachAdj * (c.budget / totalBudgetVal);
+    }, 0);
+    const wDecayAdj = CHANNELS.reduce((s, c, i) => {
+      if (c.threshold === 'NO_ATT') return s + c.decayOrig * (c.budget / totalBudgetVal);
+      const adj = getAdj(c, i);
+      return s + adj.decayAdj * (c.budget / totalBudgetVal);
+    }, 0);
+
+    const de = attentionOn ? ' de-emph' : '';
+
+    tr.innerHTML = `
+      <td class="totals-label">Totals</td>
+      <td class="adj-col"></td>
+      <td class="${de}"></td>
+      <td class="adj-col td-adj"></td>
+      <td class="${de}"></td>
+      <td class="adj-col td-adj"></td>
+      <td></td>
+      <td>${fmtMoney(totalBudget)}</td>
+      <td class="${de}">${fmtDec1(wReachOrig)}</td>
+      <td class="adj-col td-adj">${fmtDec1(wReachAdj)}</td>
+      <td class="${de}">${fmtDec1(wDecayOrig)}</td>
+      <td class="adj-col td-adj">${fmtDec1(wDecayAdj)}</td>
+      <td>${fmtMoney(totalRevenue)}</td>
+    `;
+    tfoot.appendChild(tr);
+  }
+
+  // ── KPI Cards ──
+  const KPI_DEFS = [
+    {
+      label: 'Cum. Reach @1+',
+      origValue: '60.0%',
+      adjValue: null, // computed
+      metric: 'cumReach',
+    },
+    {
+      label: 'Reach w. Decay @1+',
+      origValue: '60.0%',
+      adjValue: null,
+      metric: 'decay',
+    },
+    {
+      label: 'Total GRP',
+      origValue: '591,657 GRP',
+      adjValue: null,
+      metric: 'fixed',
+    },
+    {
+      label: 'Total Budget',
+      origValue: '$5,450,000',
+      adjValue: null,
+      metric: 'fixed',
+    },
+  ];
+
+  function computeAdjKPIReach() {
+    const totalBudgetVal = CHANNELS.reduce((s, c) => s + c.budget, 0);
+    const wAdj = CHANNELS.reduce((s, c, i) => {
+      if (c.threshold === 'NO_ATT') return s + c.cumReachOrig * (c.budget / totalBudgetVal);
+      const adj = getAdj(c, i);
+      return s + adj.cumReachAdj * (c.budget / totalBudgetVal);
+    }, 0);
+    return fmtDec1(wAdj);
+  }
+
+  function computeAdjKPIDecay() {
+    const totalBudgetVal = CHANNELS.reduce((s, c) => s + c.budget, 0);
+    const wAdj = CHANNELS.reduce((s, c, i) => {
+      if (c.threshold === 'NO_ATT') return s + c.decayOrig * (c.budget / totalBudgetVal);
+      const adj = getAdj(c, i);
+      return s + adj.decayAdj * (c.budget / totalBudgetVal);
+    }, 0);
+    return fmtDec1(wAdj);
+  }
+
+  function updateKPIs() {
+    renderKPICards();
+    renderKPIChannelTable();
+  }
+
+  function renderKPICards() {
+    const grid = document.getElementById('kpiGrid');
+    const adjReach = computeAdjKPIReach();
+    const adjDecay = computeAdjKPIDecay();
+
+    const kpis = [
+      { label: 'Cum. Reach @1+', orig: '60.0%', adj: adjReach, metric: 'reach' },
+      { label: 'Reach w. Decay @1+', orig: '60.0%', adj: adjDecay, metric: 'decay' },
+      { label: 'Total GRP', orig: '591,657 GRP', adj: null, metric: 'fixed' },
+      { label: 'Total Budget', orig: '$5,450,000', adj: null, metric: 'fixed' },
+    ];
+
+    grid.innerHTML = '';
+    kpis.forEach(kpi => {
+      const card = document.createElement('div');
+      card.className = 'kpi-card';
+
+      const showAdj = attentionOn && kpi.metric !== 'fixed';
+
+      card.innerHTML = `
+        <div class="kpi-label">${kpi.label}</div>
+        <div class="kpi-value ${showAdj ? 'adj' : ''}">${showAdj ? kpi.adj : kpi.orig}</div>
+        ${showAdj ? `<div class="kpi-orig-value">Orig: ${kpi.orig}</div>` : ''}
+        ${showAdj ? `<div class="kpi-adj-label visible">Adjusted</div>` : '<div class="kpi-adj-label"></div>'}
+      `;
+      grid.appendChild(card);
+    });
+
+    // Add class to page body so we can use CSS child selectors
+    const pageBody = document.getElementById('pageBody');
+    if (attentionOn) {
+      pageBody.classList.add('attention-on-state');
+    } else {
+      pageBody.classList.remove('attention-on-state');
+    }
+  }
+
+  function renderKPIChannelTable() {
+    const tbody = document.getElementById('kpiTableBody');
+    tbody.innerHTML = '';
+    const de = attentionOn ? ' de-emph' : '';
+
+    CHANNELS.forEach((ch, idx) => {
+      const isNoAtt = ch.threshold === 'NO_ATT';
+      const adj = getAdj(ch, idx);
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `<td style="font-weight:600;color:#111827">${ch.name}</td>`;
+      tr.innerHTML += `<td class="${de}">${fmtDec1(ch.cumReachOrig)}</td>`;
+      if (isNoAtt) {
+        tr.innerHTML += `<td class="adj-col td-adj-kpi no-att-cell">—</td>`;
+      } else {
+        tr.innerHTML += `<td class="adj-col td-adj-kpi">${fmtDec1(adj.cumReachAdj)}</td>`;
+      }
+      tr.innerHTML += `<td class="${de}">${fmtDec1(ch.decayOrig)}</td>`;
+      if (isNoAtt) {
+        tr.innerHTML += `<td class="adj-col td-adj-kpi no-att-cell">—</td>`;
+      } else {
+        tr.innerHTML += `<td class="adj-col td-adj-kpi">${fmtDec1(adj.decayAdj)}</td>`;
+      }
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ── Chart ──
+  const CHART_DATA = {
+    budget:  [680000, 720000, 695000, 710000, 680000, 695000, 670000, 600000],
+    weight:  [65000,  72000,  68000,  71000,  65000,  68000,  62000,  58000],
+    adstock: [78000,  82000,  80000,  79000,  77000,  76000,  74000,  68000],
+  };
+  const CHART_LABELS = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'];
+
+  function formatChartVal(v, metric) {
+    if (metric === 'budget') return '$' + (v / 1000).toFixed(0) + 'K';
+    return v.toLocaleString('en-US');
+  }
+
+  function renderChart() {
+    const svg = document.getElementById('chartSvg');
+    const data = CHART_DATA[chartMetric === 'adstock' ? 'adstock' : chartMetric];
+    const W = 900, H = 240;
+    const padLeft = 72, padRight = 20, padTop = 18, padBottom = 36;
+    const chartW = W - padLeft - padRight;
+    const chartH = H - padTop - padBottom;
+
+    const maxVal = Math.max(...data);
+    const minVal = 0;
+
+    // Y ticks
+    const yTickCount = 5;
+    const yStep = maxVal / yTickCount;
+
+    const barW = (chartW / data.length) * 0.55;
+    const barGap = (chartW / data.length) * 0.45;
+    const barSlot = chartW / data.length;
+
+    let svgContent = '';
+
+    // Y gridlines + labels
+    for (let i = 0; i <= yTickCount; i++) {
+      const val = yStep * i;
+      const y = padTop + chartH - (val / maxVal) * chartH;
+      svgContent += `<line x1="${padLeft}" y1="${y}" x2="${W - padRight}" y2="${y}" stroke="#E5E7EB" stroke-width="1"/>`;
+      svgContent += `<text x="${padLeft - 8}" y="${y + 4}" text-anchor="end" font-size="10" fill="#9CA3AF" font-family="Inter,sans-serif">${formatChartVal(val, chartMetric)}</text>`;
+    }
+
+    // Bars
+    data.forEach((val, i) => {
+      const barH = (val / maxVal) * chartH;
+      const x = padLeft + i * barSlot + barGap / 2;
+      const y = padTop + chartH - barH;
+      svgContent += `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" rx="4" fill="#4F6BED"/>`;
+      // X label
+      const lx = padLeft + i * barSlot + barSlot / 2;
+      svgContent += `<text x="${lx}" y="${H - 8}" text-anchor="middle" font-size="11" fill="#6B7280" font-family="Inter,sans-serif">${CHART_LABELS[i]}</text>`;
+    });
+
+    svg.innerHTML = svgContent;
+  }
+
+  // ── Toggle ──
+  const toggle = document.getElementById('attToggle');
+  const tableWrap = document.getElementById('tableWrap');
+  const sidebar = document.getElementById('sidebar');
+  const attBadge = document.getElementById('attBadge');
+
+  function applyToggleState() {
+    const kpiTableWrap = document.getElementById('kpiTableWrap');
+    if (attentionOn) {
+      toggle.classList.add('on');
+      toggle.setAttribute('aria-checked', 'true');
+      tableWrap.classList.add('attention-on');
+      if (kpiTableWrap) kpiTableWrap.classList.add('attention-on');
+      sidebar.classList.add('collapsed');
+      attBadge.classList.add('visible');
+    } else {
+      toggle.classList.remove('on');
+      toggle.setAttribute('aria-checked', 'false');
+      tableWrap.classList.remove('attention-on');
+      if (kpiTableWrap) kpiTableWrap.classList.remove('attention-on');
+      sidebar.classList.remove('collapsed');
+      attBadge.classList.remove('visible');
+    }
+    // Update de-emphasis on orig columns
+    updateOrigColEmphasis();
+    buildTotalsRow();
+    updateKPIs();
+  }
+
+  function updateOrigColEmphasis() {
+    const origCells = document.querySelectorAll('.orig-cost, .orig-weight, .orig-reach, .orig-decay');
+    origCells.forEach(cell => {
+      if (attentionOn) cell.classList.add('de-emph');
+      else cell.classList.remove('de-emph');
+    });
+  }
+
+  toggle.addEventListener('click', () => {
+    attentionOn = !attentionOn;
+    applyToggleState();
+  });
+  toggle.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      attentionOn = !attentionOn;
+      applyToggleState();
+    }
+  });
+
+  // ── Flighting summary segmented control ──
+  document.getElementById('segTotals').addEventListener('click', () => {
+    flightingPanel = 'totals';
+    document.getElementById('segTotals').classList.add('active');
+    document.getElementById('segChannels').classList.remove('active');
+    document.getElementById('panelTotals').classList.remove('hidden');
+    document.getElementById('panelChannels').classList.add('hidden');
+  });
+  document.getElementById('segChannels').addEventListener('click', () => {
+    flightingPanel = 'channels';
+    document.getElementById('segChannels').classList.add('active');
+    document.getElementById('segTotals').classList.remove('active');
+    document.getElementById('panelChannels').classList.remove('hidden');
+    document.getElementById('panelTotals').classList.add('hidden');
+    renderKPIChannelTable();
+  });
+
+  // ── Chart segmented control ──
+  ['Budget', 'Weight', 'Adstock'].forEach(name => {
+    const id = 'seg' + name;
+    document.getElementById(id).addEventListener('click', () => {
+      chartMetric = name.toLowerCase();
+      ['Budget', 'Weight', 'Adstock'].forEach(n => {
+        document.getElementById('seg' + n).classList.remove('active');
+      });
+      document.getElementById(id).classList.add('active');
+      renderChart();
+    });
+  });
+
+  // ── Init ──
+  buildTableRows();
+  renderKPICards();
+  renderKPIChannelTable();
+  renderChart();
+
+})();
+</script>
+</body>
+</html>
