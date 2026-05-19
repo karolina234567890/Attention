@@ -1291,16 +1291,19 @@
   const attBadge = document.getElementById('attBadge');
 
   function applyToggleState() {
+    const kpiTableWrap = document.getElementById('kpiTableWrap');
     if (attentionOn) {
       toggle.classList.add('on');
       toggle.setAttribute('aria-checked', 'true');
       tableWrap.classList.add('attention-on');
+      if (kpiTableWrap) kpiTableWrap.classList.add('attention-on');
       sidebar.classList.add('collapsed');
       attBadge.classList.add('visible');
     } else {
       toggle.classList.remove('on');
       toggle.setAttribute('aria-checked', 'false');
       tableWrap.classList.remove('attention-on');
+      if (kpiTableWrap) kpiTableWrap.classList.remove('attention-on');
       sidebar.classList.remove('collapsed');
       attBadge.classList.remove('visible');
     }
