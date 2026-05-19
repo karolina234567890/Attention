@@ -13,34 +13,44 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: #F9FAFB;
+      background: #F8F9FA;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       overflow-x: hidden;
+      color: #111827;
     }
 
-    /* ─── Back Link ─── */
-    .back-link {
+    /* ── Back Link ────────────────────────────────────────── */
+    .back-to-index {
       position: fixed;
-      top: 12px;
-      left: 12px;
-      z-index: 1000;
+      top: 10px;
+      left: 10px;
+      z-index: 9999;
       font-size: 12px;
       color: #6B7280;
       text-decoration: none;
-      background: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.95);
       border: 1px solid #E5E7EB;
       border-radius: 6px;
       padding: 4px 10px;
-      transition: color 0.2s, background 0.2s;
+      transition: color 0.15s, background 0.15s;
     }
-    .back-link:hover { color: #374151; background: #fff; }
+    .back-to-index:hover { color: #374151; background: #fff; }
 
-    /* ─── Sidebar ─── */
+    /* ── App Shell ────────────────────────────────────────── */
+    .app-shell {
+      display: flex;
+      flex: 1;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ──────────────────────────────────────────── */
     .sidebar {
       width: 240px;
       min-width: 240px;
-      background: #1E2433;
+      background: #FFFFFF;
+      border-right: 1px solid #E5E7EB;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
@@ -50,129 +60,182 @@
       overflow: hidden;
       transition: width 300ms ease, min-width 300ms ease;
       flex-shrink: 0;
-      z-index: 10;
+      z-index: 20;
     }
     .sidebar.collapsed {
       width: 48px;
       min-width: 48px;
     }
 
-    .sidebar-header {
-      padding: 20px 16px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
+    .sidebar-top {
+      padding: 16px 14px 12px;
+      border-bottom: 1px solid #E5E7EB;
       overflow: hidden;
       white-space: nowrap;
-    }
-    .sidebar-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .sidebar-logo-icon {
-      width: 28px;
-      height: 28px;
-      background: #4F6BED;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
       flex-shrink: 0;
     }
-    .sidebar-logo-text {
-      font-size: 13px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.01em;
+    .sidebar-back {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #6B7280;
+      text-decoration: none;
+      margin-bottom: 12px;
+      transition: color 0.15s;
+    }
+    .sidebar-back:hover { color: #374151; }
+    .sidebar-back-text { transition: opacity 300ms ease; }
+    .sidebar.collapsed .sidebar-back-text { opacity: 0; }
+
+    .sidebar-plan-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .sidebar-plan-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+      transition: opacity 300ms ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sidebar.collapsed .sidebar-plan-name { opacity: 0; }
+    .sidebar-dots {
+      color: #9CA3AF;
+      font-size: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+      line-height: 1;
       transition: opacity 300ms ease;
     }
-    .sidebar.collapsed .sidebar-logo-text { opacity: 0; }
+    .sidebar.collapsed .sidebar-dots { opacity: 0; }
 
-    .sidebar-scenario {
-      padding: 12px 16px 8px;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-    .sidebar-scenario-label {
+    .sidebar-section-label {
+      padding: 14px 14px 6px;
       font-size: 10px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: rgba(255,255,255,0.35);
-      margin-bottom: 4px;
+      color: #9CA3AF;
+      overflow: hidden;
+      white-space: nowrap;
       transition: opacity 300ms ease;
     }
-    .sidebar.collapsed .sidebar-scenario-label { opacity: 0; }
-    .sidebar-scenario-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.9);
-      transition: opacity 300ms ease;
-    }
-    .sidebar.collapsed .sidebar-scenario-name { opacity: 0; }
+    .sidebar.collapsed .sidebar-section-label { opacity: 0; }
 
     .sidebar-nav {
-      padding: 8px 0;
       flex: 1;
+      overflow: hidden;
     }
+
     .nav-item {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 9px 16px;
+      padding: 9px 14px;
       font-size: 13px;
       font-weight: 500;
-      color: rgba(255,255,255,0.55);
+      color: #6B7280;
       cursor: pointer;
-      transition: background 200ms, color 200ms;
+      text-decoration: none;
       white-space: nowrap;
       overflow: hidden;
-      border-radius: 0;
       position: relative;
-      text-decoration: none;
+      transition: background 150ms, color 150ms;
+      border-radius: 0;
     }
-    .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+    .nav-item:hover { background: #F9FAFB; color: #374151; }
     .nav-item.active {
-      background: rgba(79,107,237,0.2);
-      color: #818CF8;
-    }
-    .nav-item.active::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-      background: #4F6BED;
-      border-radius: 0 2px 2px 0;
+      background: #EEF2FF;
+      color: #4F6BED;
     }
     .nav-icon {
-      width: 18px;
-      height: 18px;
+      font-size: 15px;
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .nav-label { transition: opacity 300ms ease; }
+    .sidebar.collapsed .nav-label { opacity: 0; }
+
+    .nav-status {
+      margin-left: auto;
+      font-size: 11px;
+      flex-shrink: 0;
+      transition: opacity 300ms ease;
+    }
+    .sidebar.collapsed .nav-status { opacity: 0; }
+    .nav-status.done { color: #10B981; }
+    .nav-status.active-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4F6BED;
+      display: inline-block;
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid #E5E7EB;
+      padding: 10px 14px;
+      overflow: hidden;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .sidebar-footer-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #6B7280;
+      text-decoration: none;
+      padding: 5px 0;
+      transition: color 0.15s;
+    }
+    .sidebar-footer-link:hover { color: #374151; }
+    .sidebar-footer-link-text { transition: opacity 300ms ease; }
+    .sidebar.collapsed .sidebar-footer-link-text { opacity: 0; }
+
+    /* Collapse toggle button */
+    .sidebar-collapse-btn {
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
-      flex-shrink: 0;
+      cursor: pointer;
+      z-index: 21;
+      transition: background 150ms;
+      color: #6B7280;
+      font-size: 11px;
     }
-    .nav-label {
-      transition: opacity 300ms ease;
-    }
-    .sidebar.collapsed .nav-label { opacity: 0; }
+    .sidebar-collapse-btn:hover { background: #F9FAFB; color: #374151; }
 
-    /* ─── Main Content ─── */
+    /* ── Main Area ────────────────────────────────────────── */
     .main {
       flex: 1;
       min-width: 0;
       display: flex;
       flex-direction: column;
-      background: #F9FAFB;
+      background: #F8F9FA;
     }
 
-    /* ─── Top Toolbar ─── */
-    .toolbar {
+    /* ── Page Header ──────────────────────────────────────── */
+    .page-header {
       background: #fff;
       border-bottom: 1px solid #E5E7EB;
       padding: 0 28px;
-      height: 64px;
+      height: 60px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -180,131 +243,20 @@
       flex-shrink: 0;
       position: sticky;
       top: 0;
-      z-index: 9;
+      z-index: 10;
     }
-
-    .toolbar-left {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-    }
-    .breadcrumb {
-      font-size: 11px;
-      color: #9CA3AF;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .breadcrumb span { color: #6B7280; }
-    .scenario-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .scenario-name {
-      font-size: 15px;
+    .page-title {
+      font-size: 22px;
       font-weight: 700;
       color: #111827;
+      line-height: 1.2;
     }
-    .scenario-sub {
-      font-size: 12px;
-      color: #9CA3AF;
-    }
-    .badge-attention {
-      background: #EEF2FF;
-      color: #4F6BED;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 2px 7px;
-      border-radius: 20px;
-      display: none;
-    }
-    .badge-attention.visible { display: inline-block; }
-
-    .toolbar-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-
-    /* Toggle */
-    .toggle-group {
+    .page-header-actions {
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .toggle-label {
-      font-size: 13px;
-      font-weight: 500;
-      color: #374151;
-      white-space: nowrap;
-    }
-    .info-icon {
-      font-size: 13px;
-      color: #9CA3AF;
-      cursor: pointer;
-      position: relative;
-    }
-    .info-icon:hover .tooltip { display: block; }
-    .tooltip {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: calc(100% + 6px);
-      width: 260px;
-      background: #1E2433;
-      color: #fff;
-      font-size: 12px;
-      font-weight: 400;
-      line-height: 1.5;
-      padding: 10px 12px;
-      border-radius: 8px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-      z-index: 100;
-      white-space: normal;
-    }
-    .tooltip::before {
-      content: '';
-      position: absolute;
-      top: -5px;
-      right: 8px;
-      width: 10px; height: 10px;
-      background: #1E2433;
-      transform: rotate(45deg);
-    }
-
-    .toggle-switch {
-      position: relative;
-      width: 40px;
-      height: 22px;
-      cursor: pointer;
-    }
-    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
-    .toggle-track {
-      position: absolute;
-      inset: 0;
-      background: #D1D5DB;
-      border-radius: 11px;
-      transition: background 300ms ease;
-    }
-    .toggle-switch input:checked ~ .toggle-track { background: #4F6BED; }
-    .toggle-thumb {
-      position: absolute;
-      width: 18px; height: 18px;
-      background: #fff;
-      border-radius: 50%;
-      top: 2px; left: 2px;
-      transition: transform 300ms ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    }
-    .toggle-switch input:checked ~ .toggle-thumb { transform: translateX(18px); }
-
-    /* Buttons */
-    .btn {
+    .btn-outline {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -316,151 +268,335 @@
       background: #fff;
       color: #374151;
       cursor: pointer;
-      transition: border-color 200ms, background 200ms, color 200ms, opacity 300ms;
       font-family: 'Inter', sans-serif;
+      transition: border-color 150ms, background 150ms;
       white-space: nowrap;
     }
-    .btn:hover { border-color: #9CA3AF; background: #F9FAFB; }
-    .btn-export {
-      border-color: #4F6BED;
-      color: #4F6BED;
-      background: #fff;
-      display: none;
+    .btn-outline:hover { border-color: #9CA3AF; background: #F9FAFB; }
+    .btn-confirm {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 7px;
+      border: none;
+      background: #10B981;
+      color: #fff;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 150ms;
+      white-space: nowrap;
     }
-    .btn-export.visible { display: inline-flex; }
-    .btn-export:hover { background: #EEF2FF; }
+    .btn-confirm:hover { background: #059669; }
 
-    /* ─── Content Area ─── */
+    /* ── Content ──────────────────────────────────────────── */
     .content {
       padding: 24px 28px;
       flex: 1;
+      max-width: 1440px;
+      width: 100%;
     }
 
-    /* ─── Table Section ─── */
-    .section {
+    /* ── Scenarios Strip ──────────────────────────────────── */
+    .scenarios-strip {
+      margin-bottom: 20px;
+    }
+    .scenarios-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #6B7280;
+      margin-bottom: 10px;
+    }
+    .scenarios-row {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .scenario-card {
       background: #fff;
       border: 1px solid #E5E7EB;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 24px;
+      border-radius: 8px;
+      padding: 11px 14px;
+      min-width: 155px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: border-color 150ms;
     }
-    .section-title-bar {
-      padding: 16px 20px 14px;
-      border-bottom: 1px solid #E5E7EB;
+    .scenario-card:hover { border-color: #9CA3AF; }
+    .scenario-card.active {
+      border-color: #4F6BED;
+      background: #F8F9FF;
+    }
+    .scenario-card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 6px;
     }
-    .section-title {
-      font-size: 14px;
+    .scenario-card-name {
+      font-size: 13px;
       font-weight: 600;
       color: #111827;
     }
-
-    /* Table */
-    .table-wrap {
-      overflow-x: auto;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-    thead tr {
-      background: #F9FAFB;
-    }
-    th {
-      padding: 10px 14px;
-      text-align: left;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #374151;
-      border-bottom: 1px solid #E5E7EB;
-      white-space: nowrap;
-      position: relative;
-    }
-    th.col-adj {
-      color: #374151;
-    }
-    .th-adj-label {
-      display: none;
-      font-size: 9px;
-      font-weight: 700;
-      color: #4F6BED;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-top: 2px;
-    }
-    .attention-on .th-adj-label { display: block; }
-
-    td {
-      padding: 10px 14px;
-      border-bottom: 1px solid #E5E7EB;
-      color: #374151;
-      white-space: nowrap;
-      vertical-align: middle;
-    }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #F9FAFB; }
-    tr.total-row td {
-      background: #F9FAFB;
-      font-weight: 600;
-      border-top: 2px solid #E5E7EB;
-    }
-    tr.total-row:hover td { background: #F2F4FF; }
-
-    .cell-orig { color: #6B7280; }
-    .cell-adj { color: #4F6BED; font-weight: 700; }
-
-    /* Unit badge */
-    .unit-badge {
-      display: inline-block;
-      background: #F3F4F6;
-      color: #6B7280;
-      font-size: 10px;
-      font-weight: 600;
-      padding: 1px 5px;
-      border-radius: 4px;
-      margin-left: 4px;
-      vertical-align: middle;
-    }
-
-    /* Threshold dropdown */
-    .threshold-select {
-      font-family: 'Inter', sans-serif;
-      font-size: 12px;
-      font-weight: 500;
-      color: #374151;
-      background: #F9FAFB;
-      border: 1px solid #D1D5DB;
-      border-radius: 5px;
-      padding: 3px 6px;
-      cursor: pointer;
-      outline: none;
-      transition: border-color 200ms;
-    }
-    .threshold-select:hover, .threshold-select:focus { border-color: #4F6BED; }
-
-    /* NO ATTENTION badge */
-    .badge-no-att {
+    .badge-ai {
       background: #E5E7EB;
       color: #6B7280;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 600;
-      padding: 2px 7px;
-      border-radius: 20px;
-      white-space: nowrap;
-      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+    .badge-att-adj {
+      background: #EEF2FF;
+      color: #4F6BED;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 2px 5px;
+      border-radius: 4px;
+      display: none;
+    }
+    .badge-att-adj.visible { display: inline-block; }
+    .scenario-card-metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .scenario-card-metric {
+      font-size: 11px;
+      color: #9CA3AF;
+    }
+    .scenario-card-add {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #6B7280;
+      background: #fff;
+      border: 1.5px dashed #D1D5DB;
+      border-radius: 8px;
+      padding: 11px 18px;
+      min-width: 120px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: border-color 150ms, color 150ms;
+    }
+    .scenario-card-add:hover { border-color: #9CA3AF; color: #374151; }
+
+    /* ── Scenario 1 Section ───────────────────────────────── */
+    .scenario-section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 14px;
     }
 
-    /* Column visibility */
-    .col-threshold { display: none; }
-    .attention-on .col-threshold { display: table-cell; }
+    /* ── Optimization Bar ─────────────────────────────────── */
+    .opt-bar-wrap {
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+    }
+    .opt-bar-label {
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9CA3AF;
+      margin-bottom: 8px;
+    }
+    .opt-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .opt-field {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .opt-field-label {
+      font-size: 10px;
+      font-weight: 500;
+      color: #6B7280;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .opt-select, .opt-input {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      background: #fff;
+      border: 1px solid #D1D5DB;
+      border-radius: 6px;
+      padding: 5px 10px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 150ms;
+    }
+    .opt-select:focus, .opt-input:focus { border-color: #4F6BED; }
+    .opt-input { min-width: 130px; cursor: text; }
+    .btn-optimize {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 7px;
+      border: none;
+      background: #4F6BED;
+      color: #fff;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 150ms;
+      align-self: flex-end;
+      margin-top: 14px;
+    }
+    .btn-optimize:hover { background: #3A56D4; }
 
-    /* ─── Flighting Summary ─── */
-    .seg-control {
+    /* ── Table Toolbar ────────────────────────────────────── */
+    .table-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .table-toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .table-toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Toggle group */
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toggle-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      white-space: nowrap;
+    }
+    .toggle-switch {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: #D1D5DB;
+      border-radius: 10px;
+      transition: background 250ms ease;
+    }
+    .toggle-switch input:checked ~ .toggle-track { background: #4F6BED; }
+    .toggle-thumb {
+      position: absolute;
+      width: 16px; height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      top: 2px; left: 2px;
+      transition: transform 250ms ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    }
+    .toggle-switch input:checked ~ .toggle-thumb { transform: translateX(16px); }
+
+    /* Tooltip */
+    .info-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    .info-icon {
+      font-size: 13px;
+      color: #9CA3AF;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .info-icon:hover .tooltip { display: block; }
+    .tooltip {
+      display: none;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: calc(100% + 8px);
+      width: 270px;
+      background: #1F2937;
+      color: #F9FAFB;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.55;
+      padding: 10px 12px;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      z-index: 200;
+      white-space: normal;
+    }
+    .tooltip::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 8px; height: 8px;
+      background: #1F2937;
+    }
+
+    /* Toolbar buttons */
+    .btn-toolbar {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 6px;
+      border: 1.5px solid #D1D5DB;
+      background: #fff;
+      color: #374151;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 150ms, background 150ms;
+      white-space: nowrap;
+    }
+    .btn-toolbar:hover { border-color: #9CA3AF; background: #F9FAFB; }
+    .btn-export {
+      border-color: #4F6BED;
+      color: #4F6BED;
+      display: none;
+    }
+    .btn-export.visible { display: inline-flex; }
+    .btn-export:hover { background: #EEF2FF; border-color: #4F6BED; }
+
+    /* Chart segmented control in toolbar */
+    .seg-ctrl {
       display: inline-flex;
       background: #F3F4F6;
       border-radius: 7px;
@@ -475,541 +611,1147 @@
       background: transparent;
       border: none;
       border-radius: 5px;
-      padding: 5px 12px;
+      padding: 4px 11px;
       cursor: pointer;
-      transition: background 200ms, color 200ms;
+      transition: background 150ms, color 150ms;
+      white-space: nowrap;
     }
     .seg-btn.active {
       background: #fff;
       color: #111827;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
 
-    /* KPI cards */
-    .kpi-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      padding: 20px;
-    }
-    .kpi-card {
-      background: #F9FAFB;
+    /* ── Data Table ───────────────────────────────────────── */
+    .table-card {
+      background: #fff;
       border: 1px solid #E5E7EB;
       border-radius: 8px;
-      padding: 16px 18px;
+      overflow: hidden;
+      margin-bottom: 6px;
     }
-    .kpi-label {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #9CA3AF;
-      margin-bottom: 8px;
+    .table-wrap {
+      overflow-x: auto;
     }
-    .kpi-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: #111827;
-      line-height: 1.1;
-    }
-    .kpi-value.adj { color: #4F6BED; }
-    .kpi-sublabel {
-      font-size: 10px;
-      font-weight: 600;
-      color: #4F6BED;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-top: 4px;
-      display: none;
-    }
-    .attention-on .kpi-sublabel { display: block; }
-
-    /* KPI channels table */
-    .kpi-channels-table {
+    table {
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
     }
-    .kpi-channels-table th {
+    thead tr {
       background: #F9FAFB;
-      padding: 8px 14px;
+    }
+    th {
+      padding: 9px 14px;
+      text-align: right;
       font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #6B7280;
+      border-bottom: 1px solid #E5E7EB;
+      white-space: nowrap;
+      user-select: none;
+      cursor: pointer;
+    }
+    th:first-child { text-align: left; }
+    th.col-threshold-head { text-align: left; }
+
+    .th-inner {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .th-sort { color: #D1D5DB; font-size: 10px; }
+    .th-adj-pill {
+      display: none;
+      background: #EEF2FF;
+      color: #4F6BED;
+      font-size: 9px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      color: #374151;
-      border-bottom: 1px solid #E5E7EB;
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-left: 4px;
     }
-    .kpi-channels-table td {
+    .attention-on .th-adj-pill { display: inline-block; }
+
+    td {
       padding: 9px 14px;
       border-bottom: 1px solid #F3F4F6;
-      color: #374151;
+      color: #111827;
+      white-space: nowrap;
+      vertical-align: middle;
+      text-align: right;
     }
-    .kpi-channels-table tr:hover td { background: #F9FAFB; }
-    .kpi-channels-table tr:last-child td { border-bottom: none; }
+    td:first-child { text-align: left; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #F9FAFB; }
 
-    /* ─── Flighting Chart ─── */
-    .chart-section {
+    tr.total-row td {
+      background: #F9FAFB;
+      font-weight: 600;
+      border-top: 2px solid #E5E7EB;
+      border-bottom: none;
+    }
+    tr.total-row:hover td { background: #F2F4FF; }
+
+    /* Column visibility */
+    .col-threshold { display: none; text-align: left; }
+    .attention-on .col-threshold { display: table-cell; }
+
+    /* Cell styles */
+    .cell-channel-name {
+      font-weight: 500;
+      color: #111827;
+      font-size: 13px;
+    }
+    .cell-muted { color: #9CA3AF; }
+    .cell-adj-val { color: #4F6BED; font-weight: 700; font-size: 13px; }
+    .cell-orig-sub { color: #9CA3AF; font-size: 11px; font-weight: 400; display: block; margin-top: 1px; }
+
+    /* Budget cell */
+    .budget-cell {
+      background: #F3F4F6;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 13px;
+      color: #374151;
+      display: inline-block;
+      min-width: 90px;
+      text-align: right;
+    }
+
+    /* Metric badge inline */
+    .metric-badge {
+      font-size: 10px;
+      font-weight: 500;
+      color: #9CA3AF;
+      margin-left: 3px;
+    }
+
+    /* NO ATTENTION badge */
+    .badge-no-att {
+      background: #E5E7EB;
+      color: #6B7280;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* Threshold select */
+    .threshold-select {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: #374151;
       background: #fff;
       border: 1px solid #E5E7EB;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 24px;
+      border-radius: 6px;
+      padding: 4px 8px;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 150ms;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      padding-right: 24px;
+      min-width: 80px;
     }
-    .chart-header {
-      padding: 16px 20px 14px;
+    .threshold-select:hover, .threshold-select:focus { border-color: #4F6BED; }
+
+    /* Calculate KPIs button */
+    .calc-kpi-btn {
+      display: flex;
+      justify-content: flex-end;
+      padding: 10px 14px;
+      border-top: 1px solid #E5E7EB;
+    }
+    .btn-calc {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 6px;
+      border: 1.5px solid #10B981;
+      background: #fff;
+      color: #10B981;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 150ms;
+    }
+    .btn-calc:hover { background: #F0FDF9; }
+
+    /* ── Flighting Summary ────────────────────────────────── */
+    .section-card {
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .section-card-header {
+      padding: 14px 18px 12px;
       border-bottom: 1px solid #E5E7EB;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
     }
-    .chart-area {
-      padding: 20px 20px 16px;
-    }
-    canvas#flightingChart {
-      width: 100% !important;
-      display: block;
-    }
-    .chart-x-labels {
-      display: flex;
-      justify-content: space-around;
-      padding: 6px 0 0;
-      font-size: 11px;
-      color: #9CA3AF;
-      font-weight: 500;
+    .section-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #111827;
     }
 
-    /* Flighting views */
+    /* KPIs table inside flighting summary */
+    .kpi-table-wrap {
+      overflow-x: auto;
+      padding: 0;
+    }
+    .kpi-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .kpi-table th {
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #6B7280;
+      background: #F9FAFB;
+      border-bottom: 1px solid #E5E7EB;
+      white-space: nowrap;
+      text-align: right;
+    }
+    .kpi-table th:first-child { text-align: left; }
+    .kpi-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #F3F4F6;
+      white-space: nowrap;
+      color: #374151;
+      text-align: right;
+    }
+    .kpi-table td:first-child { text-align: left; font-weight: 500; color: #111827; font-size: 12px; }
+    .kpi-table tr:last-child td { border-bottom: none; }
+    .kpi-table tr:hover td { background: #F9FAFB; }
+    .kpi-adj-val { color: #4F6BED; font-weight: 700; display: block; }
+    .kpi-orig-sub { color: #9CA3AF; font-size: 11px; display: block; }
+
+    /* ── Flighting Chart ──────────────────────────────────── */
+    .chart-wrap {
+      padding: 20px 20px 16px;
+    }
+    .chart-svg-container {
+      width: 100%;
+      overflow: hidden;
+    }
+    #flightingSvg {
+      width: 100%;
+      display: block;
+    }
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      padding: 12px 0 4px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #6B7280;
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .legend-line {
+      width: 18px;
+      height: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ── Flighting Summary Tabs ───────────────────────────── */
     #kpiTotalsView, #kpiChannelsView { display: none; }
     #kpiTotalsView.active, #kpiChannelsView.active { display: block; }
 
-    /* Tooltip fix */
-    .info-wrapper {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-    }
+    /* ── Misc ─────────────────────────────────────────────── */
+    .divider { height: 1px; background: #E5E7EB; }
 
-    /* Responsive clamp */
-    @media (max-width: 1200px) {
-      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 1100px) {
+      .content { padding: 16px 16px; }
     }
   </style>
 </head>
 <body>
 
-<a href="../index.html" class="back-link">← Back to index</a>
+<a href="../index.html" class="back-to-index">← Back to index</a>
 
-<!-- Sidebar -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <div class="sidebar-logo">
-      <div class="sidebar-logo-icon">📊</div>
-      <span class="sidebar-logo-text">Media Plan</span>
-    </div>
-  </div>
-  <div class="sidebar-scenario">
-    <div class="sidebar-scenario-label">Scenario</div>
-    <div class="sidebar-scenario-name">Q3 2026 National</div>
-  </div>
-  <nav class="sidebar-nav">
-    <a class="nav-item active" href="#">
-      <span class="nav-icon">⊞</span>
-      <span class="nav-label">Channel Allocation</span>
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">◈</span>
-      <span class="nav-label">Budget Overview</span>
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">⌇</span>
-      <span class="nav-label">Reach Curves</span>
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">▦</span>
-      <span class="nav-label">Flighting</span>
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">◫</span>
-      <span class="nav-label">Reports</span>
-    </a>
-  </nav>
-</aside>
+<div class="app-shell">
 
-<!-- Main -->
-<main class="main" id="mainContent">
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" id="sidebar">
+    <!-- Collapse button -->
+    <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Toggle sidebar">‹</button>
 
-  <!-- Toolbar -->
-  <div class="toolbar">
-    <div class="toolbar-left">
-      <div class="breadcrumb">Media Plans <span>/ Q3 2026 National /</span> Channel Allocation</div>
-      <div class="scenario-row">
-        <span class="scenario-name">Q3 2026 National</span>
-        <span class="scenario-sub">Base Scenario</span>
-        <span class="badge-attention" id="badgeAttention">ATTENTION ADJ.</span>
-      </div>
-    </div>
-    <div class="toolbar-right">
-      <div class="toggle-group">
-        <span class="toggle-label">Attention Adjustment</span>
-        <div class="info-wrapper">
-          <span class="info-icon">ⓘ
-            <div class="tooltip">Applies Lumen attention data to adjust reach and decay metrics based on the selected threshold per channel.</div>
-          </span>
-        </div>
-        <label class="toggle-switch">
-          <input type="checkbox" id="attentionToggle" />
-          <div class="toggle-track"></div>
-          <div class="toggle-thumb"></div>
-        </label>
-      </div>
-      <button class="btn btn-export" id="exportBtn">
-        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M7 1v8M7 9l-3-3M7 9l3-3M1 11h12" stroke="#4F6BED" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Export
-      </button>
-      <button class="btn" id="manageColumnsBtn">
-        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="1" y="1" width="3" height="12" rx="1" stroke="#6B7280" stroke-width="1.4"/>
-          <rect x="5.5" y="1" width="3" height="12" rx="1" stroke="#6B7280" stroke-width="1.4"/>
-          <rect x="10" y="1" width="3" height="12" rx="1" stroke="#6B7280" stroke-width="1.4"/>
-        </svg>
-        Manage Columns
-      </button>
-    </div>
-  </div>
-
-  <!-- Content -->
-  <div class="content">
-
-    <!-- Data Table Section -->
-    <div class="section" id="tableSection">
-      <div class="section-title-bar">
-        <span class="section-title">Channel Allocation</span>
-      </div>
-      <div class="table-wrap">
-        <table id="mainTable">
-          <thead>
-            <tr>
-              <th style="min-width:120px;">Channel</th>
-              <th class="col-threshold" style="min-width:140px;">Attention Threshold</th>
-              <th style="min-width:110px;">Cost</th>
-              <th style="min-width:120px;">Weight</th>
-              <th style="min-width:110px;">Budget Share %</th>
-              <th style="min-width:120px;">Budget</th>
-              <th class="col-adj" style="min-width:120px;">
-                Cum. Reach @1+
-                <div class="th-adj-label">ADJUSTED</div>
-              </th>
-              <th class="col-adj" style="min-width:140px;">
-                Reach w. Decay @1+
-                <div class="th-adj-label">ADJUSTED</div>
-              </th>
-              <th style="min-width:110px;">Revenue</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody">
-            <!-- Rows injected by JS -->
-          </tbody>
-          <tfoot id="tableFoot">
-            <!-- Total row injected by JS -->
-          </tfoot>
-        </table>
+    <div class="sidebar-top">
+      <a href="#" class="sidebar-back">
+        <span>←</span>
+        <span class="sidebar-back-text">Back to Media Plans</span>
+      </a>
+      <div class="sidebar-plan-row">
+        <span class="sidebar-plan-name">Q3 2026 National</span>
+        <span class="sidebar-dots">···</span>
       </div>
     </div>
 
-    <!-- Flighting Summary -->
-    <div class="section" id="flightingSummarySection">
-      <div class="section-title-bar">
-        <span class="section-title">Flighting Summary</span>
-        <div class="seg-control">
-          <button class="seg-btn active" id="segTotals">KPIs by Totals</button>
-          <button class="seg-btn" id="segChannels">KPIs by Channels</button>
-        </div>
-      </div>
+    <div class="sidebar-section-label">Details</div>
 
-      <div id="kpiTotalsView" class="active">
-        <div class="kpi-row">
-          <div class="kpi-card">
-            <div class="kpi-label">Cum. Reach @1+</div>
-            <div class="kpi-value" id="kpiCumReach">60.0%</div>
-            <div class="kpi-sublabel" id="kpiCumReachLabel">Adjusted</div>
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="#">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">Media Plan Details</span>
+        <span class="nav-status done">✓</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon">📺</span>
+        <span class="nav-label">Channel Selection</span>
+        <span class="nav-status done">✓</span>
+      </a>
+      <a class="nav-item active" href="#">
+        <span class="nav-icon">🔵</span>
+        <span class="nav-label">Channel Allocation</span>
+        <span class="nav-status"><span class="nav-status active-dot"></span></span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon">🤝</span>
+        <span class="nav-label">Partner Selection</span>
+        <span class="nav-status" style="color:#D1D5DB;">○</span>
+      </a>
+      <a class="nav-item" href="#">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Summary</span>
+        <span class="nav-status" style="color:#D1D5DB;">○</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="#" class="sidebar-footer-link">
+        <span>📚</span>
+        <span class="sidebar-footer-link-text">Client Knowledge Bank</span>
+      </a>
+      <a href="#" class="sidebar-footer-link">
+        <span>🕐</span>
+        <span class="sidebar-footer-link-text">Activity Log</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">Channel Allocation</h1>
+      <div class="page-header-actions">
+        <button class="btn-outline">← Previous Step</button>
+        <button class="btn-confirm">Confirm &amp; Continue →</button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Scenarios Strip -->
+      <div class="scenarios-strip">
+        <div class="scenarios-label">Scenarios</div>
+        <div class="scenarios-row">
+          <div class="scenario-card">
+            <div class="scenario-card-header">
+              <span class="scenario-card-name">Revenue</span>
+              <span class="badge-ai">AI OPTIMIZED</span>
+            </div>
+            <div class="scenario-card-metrics">
+              <span class="scenario-card-metric">Total Revenue: 15 000 000 USD</span>
+              <span class="scenario-card-metric">Total Reach: 85 %</span>
+            </div>
           </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Reach w. Decay @1+</div>
-            <div class="kpi-value" id="kpiDecay">60.0%</div>
-            <div class="kpi-sublabel" id="kpiDecayLabel">Adjusted</div>
+          <div class="scenario-card">
+            <div class="scenario-card-header">
+              <span class="scenario-card-name">Reach</span>
+              <span class="badge-ai">AI OPTIMIZED</span>
+            </div>
+            <div class="scenario-card-metrics">
+              <span class="scenario-card-metric">Total Revenue: 15 000 000 USD</span>
+              <span class="scenario-card-metric">Total Reach: 85 %</span>
+            </div>
           </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Total GRP</div>
-            <div class="kpi-value">591,657</div>
-            <div style="font-size:11px;color:#9CA3AF;margin-top:4px;">GRP</div>
+          <div class="scenario-card active" id="sc1Card">
+            <div class="scenario-card-header">
+              <span class="scenario-card-name">Scenario 1</span>
+              <span class="badge-att-adj" id="scBadgeAttAdj">ATTENTION ADJ.</span>
+            </div>
+            <div class="scenario-card-metrics">
+              <span class="scenario-card-metric">Total Revenue: 15 000 000 USD</span>
+              <span class="scenario-card-metric">Total Reach: 85 %</span>
+            </div>
           </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Total Budget</div>
-            <div class="kpi-value">$5,450,000</div>
+          <div class="scenario-card">
+            <div class="scenario-card-header">
+              <span class="scenario-card-name">Scenario 2</span>
+            </div>
+            <div class="scenario-card-metrics">
+              <span class="scenario-card-metric">Total Revenue: 15 000 000 USD</span>
+              <span class="scenario-card-metric">Total Reach: 85 %</span>
+            </div>
+          </div>
+          <div class="scenario-card">
+            <div class="scenario-card-header">
+              <span class="scenario-card-name">Scenario 3</span>
+            </div>
+            <div class="scenario-card-metrics">
+              <span class="scenario-card-metric">Total Revenue: 15 000 000 USD</span>
+              <span class="scenario-card-metric">Total Reach: 85 %</span>
+            </div>
+          </div>
+          <div class="scenario-card-add">
+            <span>+</span> New Scenario
           </div>
         </div>
       </div>
 
-      <div id="kpiChannelsView">
+      <!-- Scenario 1 Section -->
+      <div class="scenario-section-title">Scenario 1</div>
+
+      <!-- Optimization Settings Bar -->
+      <div class="opt-bar-wrap">
+        <div class="opt-bar-label">Optimization Settings</div>
+        <div class="opt-bar">
+          <div class="opt-field">
+            <span class="opt-field-label">Optimized For</span>
+            <select class="opt-select">
+              <option>Maximize Reach for Budget</option>
+              <option>Maximize Revenue</option>
+              <option>Minimize Cost</option>
+            </select>
+          </div>
+          <div class="opt-field">
+            <span class="opt-field-label">Total Budget</span>
+            <input class="opt-input" type="text" value="USD 5 450 000" />
+          </div>
+          <div class="opt-field">
+            <span class="opt-field-label">Frequency Level</span>
+            <select class="opt-select">
+              <option>1+</option>
+              <option>2+</option>
+              <option>3+</option>
+            </select>
+          </div>
+          <div class="opt-field">
+            <span class="opt-field-label">Optimization Constraints</span>
+            <select class="opt-select">
+              <option>Add Constraints</option>
+              <option>Budget Cap per Channel</option>
+              <option>Min. GRP per Channel</option>
+            </select>
+          </div>
+          <button class="btn-optimize">Optimize</button>
+        </div>
+      </div>
+
+      <!-- Table Toolbar -->
+      <div class="table-toolbar">
+        <div class="table-toolbar-left">
+          <!-- Attention Toggle -->
+          <div class="toggle-group">
+            <label class="toggle-switch">
+              <input type="checkbox" id="attentionToggle" />
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+            <span class="toggle-label">Attention Adjustment</span>
+            <div class="info-wrapper">
+              <span class="info-icon">ⓘ
+                <div class="tooltip">Applies Lumen attention data to adjust reach and decay metrics based on the selected threshold per channel.</div>
+              </span>
+            </div>
+          </div>
+          <!-- Flighting Strategy (disabled) -->
+          <div class="toggle-group">
+            <label class="toggle-switch">
+              <input type="checkbox" disabled />
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+            <span class="toggle-label" style="color:#9CA3AF;">Flighting Strategy</span>
+          </div>
+        </div>
+        <div class="table-toolbar-right">
+          <button class="btn-toolbar btn-export" id="exportBtn">
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M7 9l-3-3M7 9l3-3M1 11h12" stroke="#4F6BED" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Export
+          </button>
+          <button class="btn-toolbar" id="manageColsBtn">
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="4" cy="7" r="1.5" fill="#6B7280"/><circle cx="7" cy="7" r="1.5" fill="#6B7280"/><circle cx="10" cy="7" r="1.5" fill="#6B7280"/></svg>
+            Manage Columns (6)
+          </button>
+          <!-- Chart segmented control -->
+          <div class="seg-ctrl" id="chartSegCtrl">
+            <button class="seg-btn active" data-mode="budget">Budget</button>
+            <button class="seg-btn" data-mode="weight">Weight</button>
+            <button class="seg-btn" data-mode="adstock">Weight + Adstock</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="table-card" id="tableCard">
         <div class="table-wrap">
-          <table class="kpi-channels-table" id="kpiChannelsTable">
+          <table id="mainTable">
             <thead>
               <tr>
-                <th>Channel</th>
-                <th id="kpiChCumHead">Cum. Reach @1+</th>
-                <th id="kpiChDecayHead">Reach w. Decay @1+</th>
+                <th style="min-width:120px; text-align:left;">
+                  <div class="th-inner">Channel <span class="th-sort">↑↓</span></div>
+                </th>
+                <th class="col-threshold col-threshold-head" style="min-width:150px;">
+                  <div class="th-inner">Attention Threshold</div>
+                </th>
+                <th style="min-width:110px;">
+                  <div class="th-inner" style="justify-content:flex-end;">Cost <span class="th-sort">↑↓</span></div>
+                </th>
+                <th style="min-width:120px;">
+                  <div class="th-inner" style="justify-content:flex-end;">Weight <span class="th-sort">↑↓</span></div>
+                </th>
+                <th style="min-width:110px;">
+                  <div class="th-inner" style="justify-content:flex-end;">Budget Share % <span class="th-sort">↑↓</span></div>
+                </th>
+                <th style="min-width:130px;">
+                  <div class="th-inner" style="justify-content:flex-end;">Budget <span class="th-sort">↑↓</span></div>
+                </th>
+                <th class="col-cum-reach" style="min-width:130px;">
+                  <div class="th-inner" style="justify-content:flex-end;">
+                    Cum. Reach @1+
+                    <span class="th-adj-pill">ADJUSTED</span>
+                    <span class="th-sort">↑↓</span>
+                  </div>
+                </th>
+                <th class="col-decay" style="min-width:150px;">
+                  <div class="th-inner" style="justify-content:flex-end;">
+                    Reach w. Decay @1+
+                    <span class="th-adj-pill">ADJUSTED</span>
+                    <span class="th-sort">↑↓</span>
+                  </div>
+                </th>
+                <th style="min-width:120px;">
+                  <div class="th-inner" style="justify-content:flex-end;">Revenue <span class="th-sort">↑↓</span></div>
+                </th>
               </tr>
             </thead>
-            <tbody id="kpiChannelsBody">
-              <!-- injected by JS -->
-            </tbody>
+            <tbody id="tableBody"></tbody>
+            <tfoot id="tableFoot"></tfoot>
           </table>
         </div>
-      </div>
-    </div>
-
-    <!-- Flighting Chart -->
-    <div class="chart-section">
-      <div class="chart-header">
-        <span class="section-title">Flighting</span>
-        <div class="seg-control">
-          <button class="seg-btn active" id="chartSegBudget">Budget</button>
-          <button class="seg-btn" id="chartSegWeight">Weight</button>
-          <button class="seg-btn" id="chartSegAdstock">Weight + Adstock</button>
+        <div class="calc-kpi-btn">
+          <button class="btn-calc">Calculate KPIs</button>
         </div>
       </div>
-      <div class="chart-area">
-        <canvas id="flightingChart" height="200"></canvas>
-        <div class="chart-x-labels" id="chartXLabels"></div>
-      </div>
-    </div>
 
-  </div><!-- /content -->
-</main>
+      <!-- Flighting Summary Section -->
+      <div class="section-card" id="flightingSummaryCard">
+        <div class="section-card-header">
+          <span class="section-card-title">Flighting Summary</span>
+          <div class="seg-ctrl">
+            <button class="seg-btn active" id="segTotalsBtn">KPIs by Totals</button>
+            <button class="seg-btn" id="segChannelsBtn">KPIs by Channels</button>
+          </div>
+        </div>
+
+        <!-- KPIs by Totals -->
+        <div id="kpiTotalsView" class="active">
+          <div class="kpi-table-wrap">
+            <table class="kpi-table" id="kpiTotalsTable">
+              <thead>
+                <tr>
+                  <th style="min-width:200px; text-align:left;">KPIs</th>
+                  <th style="min-width:100px;">Total</th>
+                  <th>25/08</th><th>01/09</th><th>08/09</th><th>15/09</th>
+                  <th>22/09</th><th>29/09</th><th>06/10</th><th>13/10</th>
+                  <th>20/10</th><th>27/10</th><th>03/11</th><th>10/11</th>
+                </tr>
+              </thead>
+              <tbody id="kpiTotalsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- KPIs by Channels -->
+        <div id="kpiChannelsView">
+          <div class="kpi-table-wrap">
+            <table class="kpi-table" id="kpiChannelsTable">
+              <thead>
+                <tr>
+                  <th style="min-width:140px; text-align:left;">Channel</th>
+                  <th style="min-width:90px;">Total</th>
+                  <th>25/08</th><th>01/09</th><th>08/09</th><th>15/09</th>
+                  <th>22/09</th><th>29/09</th><th>06/10</th><th>13/10</th>
+                  <th>20/10</th><th>27/10</th><th>03/11</th><th>10/11</th>
+                </tr>
+              </thead>
+              <tbody id="kpiChannelsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flighting Chart Section -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <span class="section-card-title">Flighting</span>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-svg-container">
+            <svg id="flightingSvg" height="300"></svg>
+          </div>
+          <div class="chart-legend" id="chartLegend"></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div><!-- /app-shell -->
 
 <script>
 (function () {
   'use strict';
 
-  // ─── Raw Channel Data ───────────────────────────────────────────────────────
+  /* ═══════════════════════════════════════════════
+     DATA
+  ═══════════════════════════════════════════════ */
   const RAW = [
-    { channel:'Audio',        threshold:'1 SEC', costOrig:45.32,  costAdj:40.30,  costUnit:'CPP', weightOrig:23456,  weightAdj:20500,  weightUnit:'GRP', cumReachOrig:30.0, cumReachAdj1sec:30.0,  decayOrig:30.0, decayAdj1sec:30.0,  budget:1500000, budgetShare:'27.5%', revenue:2100000, noAtt:false },
-    { channel:'Direct',       threshold:'1 SEC', costOrig:68.89,  costAdj:58.56,  costUnit:'CPP', weightOrig:65432,  weightAdj:55617,  weightUnit:'GRP', cumReachOrig:20.0, cumReachAdj1sec:17.0,  decayOrig:20.0, decayAdj1sec:17.0,  budget:1000000, budgetShare:'18.3%', revenue:1380000, noAtt:false },
-    { channel:'Display',      threshold:'1 SEC', costOrig:88.90,  costAdj:75.56,  costUnit:'CPM', weightOrig:98765,  weightAdj:83950,  weightUnit:'IMP', cumReachOrig:16.0, cumReachAdj1sec:13.6,  decayOrig:16.0, decayAdj1sec:13.6,  budget:800000,  budgetShare:'14.7%', revenue:720000,  noAtt:false },
-    { channel:'OOH',          threshold:'1 SEC', costOrig:84.76,  costAdj:72.05,  costUnit:'CPP', weightOrig:43210,  weightAdj:36729,  weightUnit:'GRP', cumReachOrig:15.0, cumReachAdj1sec:12.8,  decayOrig:15.0, decayAdj1sec:12.8,  budget:750000,  budgetShare:'13.8%', revenue:890000,  noAtt:false },
-    { channel:'Print',        threshold:'1 SEC', costOrig:57.23,  costAdj:48.65,  costUnit:'CPP', weightOrig:87654,  weightAdj:74506,  weightUnit:'GRP', cumReachOrig:10.0, cumReachAdj1sec:8.5,   decayOrig:10.0, decayAdj1sec:8.5,   budget:500000,  budgetShare:'9.2%',  revenue:610000,  noAtt:false },
-    { channel:'Retail',       threshold:'1 SEC', costOrig:99.99,  costAdj:84.99,  costUnit:'CPP', weightOrig:34567,  weightAdj:29382,  weightUnit:'GRP', cumReachOrig:6.0,  cumReachAdj1sec:5.1,   decayOrig:6.0,  decayAdj1sec:5.1,   budget:300000,  budgetShare:'5.5%',  revenue:340000,  noAtt:false },
-    { channel:'Search',       threshold:'NO_ATT',costOrig:21.67,  costAdj:null,   costUnit:'CPP', weightOrig:56789,  weightAdj:null,   weightUnit:'GRP', cumReachOrig:3.0,  cumReachAdj1sec:3.0,   decayOrig:3.0,  decayAdj1sec:3.0,   budget:150000,  budgetShare:'2.8%',  revenue:210000,  noAtt:true  },
-    { channel:'Social',       threshold:'1 SEC', costOrig:92.45,  costAdj:78.58,  costUnit:'CPP', weightOrig:78901,  weightAdj:67066,  weightUnit:'GRP', cumReachOrig:3.0,  cumReachAdj1sec:2.5,   decayOrig:3.0,  decayAdj1sec:2.5,   budget:150000,  budgetShare:'2.8%',  revenue:195000,  noAtt:false },
-    { channel:'Online Video',  threshold:'1 SEC', costOrig:73.54,  costAdj:62.51,  costUnit:'CPP', weightOrig:12345,  weightAdj:10493,  weightUnit:'GRP', cumReachOrig:3.0,  cumReachAdj1sec:2.5,   decayOrig:3.0,  decayAdj1sec:2.5,   budget:150000,  budgetShare:'2.8%',  revenue:180000,  noAtt:false },
-    { channel:'TV-Streaming',  threshold:'1 SEC', costOrig:39.12,  costAdj:33.25,  costUnit:'CPP', weightOrig:98765,  weightAdj:83950,  weightUnit:'GRP', cumReachOrig:3.0,  cumReachAdj1sec:2.5,   decayOrig:3.0,  decayAdj1sec:2.5,   budget:150000,  budgetShare:'2.8%',  revenue:220000,  noAtt:false },
+    { channel:'Audio',        noAtt:false, costOrig:45.32,  costAdj:40.30,  costUnit:'CPP', weightOrig:23456,  weightAdj:20500,  weightUnit:'GRP', cumReachOrig:30.0, cumReachAdj1sec:30.0,  decayOrig:30.0, decayAdj1sec:30.0,  budget:1500000, budgetShare:14.0, revenue:1200000 },
+    { channel:'Direct',       noAtt:false, costOrig:68.89,  costAdj:58.56,  costUnit:'CPP', weightOrig:65432,  weightAdj:55617,  weightUnit:'GRP', cumReachOrig:20.0, cumReachAdj1sec:17.0,  decayOrig:20.0, decayAdj1sec:17.0,  budget:1000000, budgetShare:6.0,  revenue:1200000 },
+    { channel:'Display',      noAtt:false, costOrig:88.90,  costAdj:75.56,  costUnit:'CPM', weightOrig:98765,  weightAdj:83950,  weightUnit:'IMP', cumReachOrig:16.0, cumReachAdj1sec:13.6,  decayOrig:16.0, decayAdj1sec:13.6,  budget:800000,  budgetShare:8.0,  revenue:900000  },
+    { channel:'OOH',          noAtt:false, costOrig:84.76,  costAdj:72.05,  costUnit:'CPP', weightOrig:43210,  weightAdj:36729,  weightUnit:'GRP', cumReachOrig:15.0, cumReachAdj1sec:12.8,  decayOrig:15.0, decayAdj1sec:12.8,  budget:750000,  budgetShare:11.0, revenue:850000  },
+    { channel:'Print',        noAtt:false, costOrig:57.23,  costAdj:48.65,  costUnit:'CPP', weightOrig:87654,  weightAdj:74506,  weightUnit:'GRP', cumReachOrig:10.0, cumReachAdj1sec:8.5,   decayOrig:10.0, decayAdj1sec:8.5,   budget:500000,  budgetShare:9.0,  revenue:300000  },
+    { channel:'Retail',       noAtt:false, costOrig:99.99,  costAdj:84.99,  costUnit:'CPP', weightOrig:34567,  weightAdj:29382,  weightUnit:'GRP', cumReachOrig:6.0,  cumReachAdj1sec:5.1,   decayOrig:6.0,  decayAdj1sec:5.1,   budget:300000,  budgetShare:9.0,  revenue:150000  },
+    { channel:'Search',       noAtt:true,  costOrig:21.67,  costAdj:null,   costUnit:'CPP', weightOrig:56789,  weightAdj:null,   weightUnit:'GRP', cumReachOrig:3.0,  cumReachAdj1sec:3.0,   decayOrig:3.0,  decayAdj1sec:3.0,   budget:150000,  budgetShare:9.0,  revenue:150000  },
+    { channel:'Social',       noAtt:false, costOrig:92.45,  costAdj:78.58,  costUnit:'CPP', weightOrig:78901,  weightAdj:67066,  weightUnit:'GRP', cumReachOrig:3.0,  cumReachAdj1sec:2.5,   decayOrig:3.0,  decayAdj1sec:2.5,   budget:150000,  budgetShare:9.0,  revenue:150000  },
+    { channel:'Online Video', noAtt:false, costOrig:73.54,  costAdj:62.51,  costUnit:'CPP', weightOrig:12345,  weightAdj:10493,  weightUnit:'GRP', cumReachOrig:3.0,  cumReachAdj1sec:2.5,   decayOrig:3.0,  decayAdj1sec:2.5,   budget:150000,  budgetShare:9.0,  revenue:150000  },
+    { channel:'TV-Streaming', noAtt:false, costOrig:39.12,  costAdj:33.25,  costUnit:'CPP', weightOrig:98765,  weightAdj:83950,  weightUnit:'GRP', cumReachOrig:3.0,  cumReachAdj1sec:2.5,   decayOrig:3.0,  decayAdj1sec:2.5,   budget:150000,  budgetShare:7.0,  revenue:150000  },
   ];
 
   const SCALE_MAP = { '1 SEC':1.0, '2 SEC':0.85, '3 SEC':0.70, '5 SEC':0.55, '10 SEC':0.35, '20 SEC':0.15 };
   const THRESHOLD_OPTIONS = ['1 SEC','2 SEC','3 SEC','5 SEC','10 SEC','20 SEC'];
+  const PERIODS = ['25/08','01/09','08/09','15/09','22/09','29/09','06/10','13/10','20/10','27/10','03/11','10/11'];
 
-  // Per-channel threshold state
-  const channelThresholds = {};
-  RAW.forEach(r => { channelThresholds[r.channel] = '1 SEC'; });
+  const CHANNEL_COLORS = {
+    'Audio':        '#EF4444',
+    'Direct':       '#22C55E',
+    'Display':      '#F97316',
+    'OOH':          '#8B5CF6',
+    'Print':        '#EC4899',
+    'Retail':       '#F59E0B',
+    'Search':       '#EAB308',
+    'Social':       '#06B6D4',
+    'Online Video': '#14B8A6',
+    'TV-Streaming': '#3B82F6',
+  };
 
-  // Computed adjusted values per channel (recomputed on threshold change)
-  function getAdjValues(row) {
-    if (row.noAtt) {
-      return { cumReachAdj: row.cumReachOrig, decayAdj: row.decayOrig };
-    }
-    const scale = SCALE_MAP[channelThresholds[row.channel]] || 1.0;
-    const cumReachAdj = row.cumReachOrig + (row.cumReachAdj1sec - row.cumReachOrig) * scale;
-    const decayAdj    = row.decayOrig    + (row.decayAdj1sec    - row.decayOrig)    * scale;
-    return { cumReachAdj: +cumReachAdj.toFixed(1), decayAdj: +decayAdj.toFixed(1) };
-  }
+  const BUDGET_TOTALS  = [680000,720000,695000,710000,680000,695000,670000,640000,660000,630000,600000,580000];
+  const WEIGHT_TOTALS  = [65000,72000,68000,71000,65000,68000,62000,58000,60000,56000,52000,48000];
+  const ADSTOCK_TOTALS = [78000,85000,80000,84000,78000,82000,75000,71000,73000,68000,64000,59000];
+  const REVENUE_PERIODS = [90000,200000,200000,200000,300000,300000,300000,300000,300000,90000,90000,250000];
 
-  // ─── Formatting helpers ──────────────────────────────────────────────────────
-  function fmtMoney(v) {
-    return '$' + v.toLocaleString('en-US');
-  }
-  function fmtPct(v) {
-    return v.toFixed(1) + '%';
-  }
-  function fmtNum(v) {
-    return v.toLocaleString('en-US');
-  }
-  function fmtCost(v) {
-    return v.toFixed(2);
-  }
-  function unitBadge(unit) {
-    return `<span class="unit-badge">${unit}</span>`;
-  }
-
-  // ─── State ───────────────────────────────────────────────────────────────────
+  /* ═══════════════════════════════════════════════
+     STATE
+  ═══════════════════════════════════════════════ */
   let attentionOn = false;
+  let chartMode   = 'budget';
+  const thresholds = {};
+  RAW.forEach(r => { thresholds[r.channel] = '1 SEC'; });
 
-  // ─── DOM refs ────────────────────────────────────────────────────────────────
-  const toggleEl       = document.getElementById('attentionToggle');
-  const sidebarEl      = document.getElementById('sidebar');
-  const badgeAttEl     = document.getElementById('badgeAttention');
-  const exportBtn      = document.getElementById('exportBtn');
-  const tableSection   = document.getElementById('tableSection');
-  const tableBody      = document.getElementById('tableBody');
-  const tableFoot      = document.getElementById('tableFoot');
-  const kpiCumReachEl  = document.getElementById('kpiCumReach');
-  const kpiDecayEl     = document.getElementById('kpiDecay');
-  const kpiChannelsTbl = document.getElementById('kpiChannelsBody');
-  const segTotalsBtn   = document.getElementById('segTotals');
-  const segChannelsBtn = document.getElementById('segChannels');
-  const kpiTotalsView  = document.getElementById('kpiTotalsView');
-  const kpiChannelsView= document.getElementById('kpiChannelsView');
+  /* ═══════════════════════════════════════════════
+     DOM REFS
+  ═══════════════════════════════════════════════ */
+  const sidebar         = document.getElementById('sidebar');
+  const collapseBtn     = document.getElementById('sidebarCollapseBtn');
+  const attToggle       = document.getElementById('attentionToggle');
+  const exportBtn       = document.getElementById('exportBtn');
+  const tableCard       = document.getElementById('tableCard');
+  const mainTable       = document.getElementById('mainTable');
+  const tableBody       = document.getElementById('tableBody');
+  const tableFoot       = document.getElementById('tableFoot');
+  const scBadgeAttAdj   = document.getElementById('scBadgeAttAdj');
+  const kpiTotalsView   = document.getElementById('kpiTotalsView');
+  const kpiChannelsView = document.getElementById('kpiChannelsView');
+  const kpiTotalsBody   = document.getElementById('kpiTotalsBody');
+  const kpiChannelsBody = document.getElementById('kpiChannelsBody');
+  const segTotalsBtn    = document.getElementById('segTotalsBtn');
+  const segChannelsBtn  = document.getElementById('segChannelsBtn');
+  const chartSegCtrl    = document.getElementById('chartSegCtrl');
+  const flightingSvg    = document.getElementById('flightingSvg');
+  const chartLegend     = document.getElementById('chartLegend');
 
-  // ─── Render table ────────────────────────────────────────────────────────────
+  /* ═══════════════════════════════════════════════
+     HELPERS
+  ═══════════════════════════════════════════════ */
+  function getAdj(row) {
+    if (row.noAtt) return { cumReachAdj: row.cumReachOrig, decayAdj: row.decayOrig };
+    const scale = SCALE_MAP[thresholds[row.channel]] || 1.0;
+    return {
+      cumReachAdj: +(row.cumReachOrig + (row.cumReachAdj1sec - row.cumReachOrig) * scale).toFixed(1),
+      decayAdj:    +(row.decayOrig    + (row.decayAdj1sec    - row.decayOrig)    * scale).toFixed(1),
+    };
+  }
+
+  function fmtNum(v) { return v.toLocaleString('en-US'); }
+  function fmtCost(v) { return v.toFixed(2); }
+  function fmtPct(v) { return v.toFixed(1) + ' %'; }
+  function fmtBudget(v) { return 'USD ' + v.toLocaleString('en-US'); }
+  function fmtRevenue(v) { return 'USD ' + v.toLocaleString('en-US'); }
+  function metricBadge(unit) { return `<span class="metric-badge">${unit}</span>`; }
+
+  /* ═══════════════════════════════════════════════
+     SIDEBAR COLLAPSE
+  ═══════════════════════════════════════════════ */
+  let sidebarCollapsed = false;
+  collapseBtn.addEventListener('click', () => {
+    sidebarCollapsed = !sidebarCollapsed;
+    sidebar.classList.toggle('collapsed', sidebarCollapsed);
+    collapseBtn.textContent = sidebarCollapsed ? '›' : '‹';
+    collapseBtn.style.right = sidebarCollapsed ? '-12px' : '-12px';
+    setTimeout(drawChart, 320);
+  });
+
+  /* ═══════════════════════════════════════════════
+     RENDER TABLE ROWS
+  ═══════════════════════════════════════════════ */
   function renderTable() {
     tableBody.innerHTML = '';
+
     RAW.forEach(row => {
-      const adj = getAdjValues(row);
+      const adj = getAdj(row);
       const tr = document.createElement('tr');
+      let html = '';
 
-      // Channel cell
-      let html = `<td style="font-weight:500;color:#111827;">${row.channel}</td>`;
+      /* Channel */
+      html += `<td class="cell-channel-name">${row.channel}</td>`;
 
-      // Threshold cell (hidden when off via CSS)
+      /* Threshold */
       if (row.noAtt) {
         html += `<td class="col-threshold"><span class="badge-no-att">NO ATTENTION</span></td>`;
       } else {
         const opts = THRESHOLD_OPTIONS.map(o =>
-          `<option value="${o}" ${channelThresholds[row.channel] === o ? 'selected' : ''}>${o}</option>`
+          `<option value="${o}"${thresholds[row.channel]===o?' selected':''}>${o}</option>`
         ).join('');
         html += `<td class="col-threshold"><select class="threshold-select" data-channel="${row.channel}">${opts}</select></td>`;
       }
 
-      // Cost
-      const costVal = row.costOrig;
-      html += `<td><span class="cell-orig">${fmtCost(costVal)}</span>${unitBadge(row.costUnit)}</td>`;
-
-      // Weight
-      const weightVal = row.weightOrig;
-      html += `<td><span class="cell-orig">${fmtNum(weightVal)}</span>${unitBadge(row.weightUnit)}</td>`;
-
-      // Budget Share
-      html += `<td>${row.budgetShare}</td>`;
-
-      // Budget
-      html += `<td>${fmtMoney(row.budget)}</td>`;
-
-      // Cum. Reach
+      /* Cost */
       if (attentionOn) {
-        html += `<td><span class="cell-adj">${fmtPct(adj.cumReachAdj)}</span></td>`;
+        html += `<td><span class="cell-muted">${fmtCost(row.costOrig)}</span>${metricBadge(row.costUnit)}</td>`;
+      } else {
+        html += `<td>${fmtCost(row.costOrig)}${metricBadge(row.costUnit)}</td>`;
+      }
+
+      /* Weight */
+      if (attentionOn) {
+        html += `<td><span class="cell-muted">${fmtNum(row.weightOrig)}</span>${metricBadge(row.weightUnit)}</td>`;
+      } else {
+        html += `<td>${fmtNum(row.weightOrig)}${metricBadge(row.weightUnit)}</td>`;
+      }
+
+      /* Budget Share */
+      html += `<td>${row.budgetShare.toFixed(1)} %</td>`;
+
+      /* Budget */
+      html += `<td><span class="budget-cell">${fmtBudget(row.budget)}</span></td>`;
+
+      /* Cum. Reach @1+ */
+      if (attentionOn && !row.noAtt) {
+        html += `<td><span class="cell-adj-val">${fmtPct(adj.cumReachAdj)}</span><span class="cell-orig-sub">${row.cumReachOrig.toFixed(1)}</span></td>`;
       } else {
         html += `<td>${fmtPct(row.cumReachOrig)}</td>`;
       }
 
-      // Decay
-      if (attentionOn) {
-        html += `<td><span class="cell-adj">${fmtPct(adj.decayAdj)}</span></td>`;
+      /* Reach w. Decay @1+ */
+      if (attentionOn && !row.noAtt) {
+        html += `<td><span class="cell-adj-val">${fmtPct(adj.decayAdj)}</span><span class="cell-orig-sub">${row.decayOrig.toFixed(1)}</span></td>`;
       } else {
         html += `<td>${fmtPct(row.decayOrig)}</td>`;
       }
 
-      // Revenue
-      html += `<td>${fmtMoney(row.revenue)}</td>`;
+      /* Revenue */
+      html += `<td>${fmtRevenue(row.revenue)}</td>`;
 
       tr.innerHTML = html;
       tableBody.appendChild(tr);
     });
 
-    // Attach threshold change events
+    /* Attach threshold change listeners */
     tableBody.querySelectorAll('.threshold-select').forEach(sel => {
       sel.addEventListener('change', function () {
-        channelThresholds[this.dataset.channel] = this.value;
+        thresholds[this.dataset.channel] = this.value;
         renderTable();
-        renderTotals();
+        renderKPITotals();
         renderKPIChannels();
-        updateKPITotals();
       });
     });
 
-    renderTotals();
+    renderTotalRow();
   }
 
-  function renderTotals() {
-    // Cost avg (sum/count of non-null)
-    const costs = RAW.filter(r => r.costOrig != null).map(r => r.costOrig);
-    const costAvg = costs.reduce((a,b) => a+b, 0) / costs.length;
-
-    // Weight sum
-    const weightSum = RAW.reduce((a,r) => a + r.weightOrig, 0);
-
-    // Cum Reach totals
-    const cumReachOrigTotal = RAW.reduce((a,r) => a + r.cumReachOrig, 0);
-    const cumReachAdjTotal  = RAW.reduce((a,r) => { const adj = getAdjValues(r); return a + adj.cumReachAdj; }, 0);
-    const decayOrigTotal    = RAW.reduce((a,r) => a + r.decayOrig, 0);
-    const decayAdjTotal     = RAW.reduce((a,r) => { const adj = getAdjValues(r); return a + adj.decayAdj; }, 0);
+  function renderTotalRow() {
+    const totalBudget  = RAW.reduce((s,r) => s + r.budget, 0);
+    const totalRevenue = RAW.reduce((s,r) => s + r.revenue, 0);
+    const cumOrigTotal = RAW.reduce((s,r) => s + r.cumReachOrig, 0);
+    const decOrigTotal = RAW.reduce((s,r) => s + r.decayOrig, 0);
+    const cumAdjTotal  = RAW.reduce((s,r) => s + getAdj(r).cumReachAdj, 0);
+    const decAdjTotal  = RAW.reduce((s,r) => s + getAdj(r).decayAdj, 0);
+    const costOrigAvg  = RAW.reduce((s,r) => s + r.costOrig, 0) / RAW.length;
+    const weightTotal  = RAW.reduce((s,r) => s + r.weightOrig, 0);
 
     let html = `<tr class="total-row">`;
-    html += `<td style="font-weight:700;color:#111827;">Total</td>`;
-    html += `<td class="col-threshold"></td>`; // threshold col
-    html += `<td><span class="cell-orig">${fmtCost(costAvg)}</span></td>`; // Cost avg
-    html += `<td><span class="cell-orig">${fmtNum(weightSum)}</span></td>`; // Weight sum
+    html += `<td class="cell-channel-name">Total</td>`;
+    html += `<td class="col-threshold"></td>`;
 
-    html += `<td>—</td>`; // Budget Share
-    html += `<td>${fmtMoney(RAW.reduce((a,r)=>a+r.budget,0))}</td>`; // Budget
-
+    /* Cost */
     if (attentionOn) {
-      html += `<td><span class="cell-adj">${fmtPct(cumReachAdjTotal)}</span></td>`;
-      html += `<td><span class="cell-adj">${fmtPct(decayAdjTotal)}</span></td>`;
+      html += `<td><span class="cell-muted">${fmtCost(costOrigAvg)}</span></td>`;
     } else {
-      html += `<td>${fmtPct(cumReachOrigTotal)}</td>`;
-      html += `<td>${fmtPct(decayOrigTotal)}</td>`;
+      html += `<td>${fmtCost(costOrigAvg)}</td>`;
     }
 
-    html += `<td>${fmtMoney(RAW.reduce((a,r)=>a+r.revenue,0))}</td>`;
-    html += `</tr>`;
+    /* Weight */
+    if (attentionOn) {
+      html += `<td><span class="cell-muted">${fmtNum(weightTotal)}</span></td>`;
+    } else {
+      html += `<td>${fmtNum(weightTotal)}</td>`;
+    }
 
+    html += `<td>—</td>`;
+    html += `<td><span class="budget-cell">${fmtBudget(totalBudget)}</span></td>`;
+
+    /* Cum Reach */
+    if (attentionOn) {
+      html += `<td><span class="cell-adj-val">${fmtPct(cumAdjTotal)}</span><span class="cell-orig-sub">${cumOrigTotal.toFixed(1)}</span></td>`;
+    } else {
+      html += `<td>${fmtPct(cumOrigTotal)}</td>`;
+    }
+
+    /* Decay */
+    if (attentionOn) {
+      html += `<td><span class="cell-adj-val">${fmtPct(decAdjTotal)}</span><span class="cell-orig-sub">${decOrigTotal.toFixed(1)}</span></td>`;
+    } else {
+      html += `<td>${fmtPct(decOrigTotal)}</td>`;
+    }
+
+    html += `<td>${fmtRevenue(totalRevenue)}</td>`;
+    html += `</tr>`;
     tableFoot.innerHTML = html;
   }
 
-  // ─── KPI Totals ──────────────────────────────────────────────────────────────
-  // Baseline totals from data
-  const cumReachOrigTotal = RAW.reduce((a,r) => a + r.cumReachOrig, 0);
-  const decayOrigTotal    = RAW.reduce((a,r) => a + r.decayOrig, 0);
+  /* ═══════════════════════════════════════════════
+     KPI TOTALS TABLE
+  ═══════════════════════════════════════════════ */
+  function renderKPITotals() {
+    const cumOrigTotal = RAW.reduce((s,r) => s + r.cumReachOrig, 0);
+    const decOrigTotal = RAW.reduce((s,r) => s + r.decayOrig, 0);
+    const cumAdjTotal  = RAW.reduce((s,r) => s + getAdj(r).cumReachAdj, 0);
+    const decAdjTotal  = RAW.reduce((s,r) => s + getAdj(r).decayAdj, 0);
+    const totalRevenue = RAW.reduce((s,r) => s + r.revenue, 0);
 
-  function updateKPITotals() {
+    const perPeriodReach = 8.2;
+
+    let html = '';
+
+    /* Row 1: Reach with decay */
+    html += '<tr>';
+    html += '<td>Reach with decay @1+</td>';
     if (attentionOn) {
-      const cumAdj = RAW.reduce((a,r) => { const adj = getAdjValues(r); return a + adj.cumReachAdj; }, 0);
-      const decAdj = RAW.reduce((a,r) => { const adj = getAdjValues(r); return a + adj.decayAdj; }, 0);
-      kpiCumReachEl.textContent = fmtPct(cumAdj);
-      kpiDecayEl.textContent    = fmtPct(decAdj);
-      kpiCumReachEl.classList.add('adj');
-      kpiDecayEl.classList.add('adj');
+      html += `<td><span class="kpi-adj-val">${fmtPct(decAdjTotal)}</span><span class="kpi-orig-sub">${decOrigTotal.toFixed(1)}</span></td>`;
     } else {
-      kpiCumReachEl.textContent = fmtPct(cumReachOrigTotal);
-      kpiDecayEl.textContent    = fmtPct(decayOrigTotal);
-      kpiCumReachEl.classList.remove('adj');
-      kpiDecayEl.classList.remove('adj');
+      html += `<td>${fmtPct(decOrigTotal)}</td>`;
     }
+    PERIODS.forEach(() => {
+      if (attentionOn) {
+        html += `<td><span class="kpi-adj-val">${perPeriodReach.toFixed(1)} %</span></td>`;
+      } else {
+        html += `<td>${perPeriodReach.toFixed(1)} %</td>`;
+      }
+    });
+    html += '</tr>';
+
+    /* Row 2: Cumulative Reach */
+    html += '<tr>';
+    html += '<td>Cumulative Reach @1+</td>';
+    if (attentionOn) {
+      html += `<td><span class="kpi-adj-val">${fmtPct(cumAdjTotal)}</span><span class="kpi-orig-sub">${cumOrigTotal.toFixed(1)}</span></td>`;
+    } else {
+      html += `<td>${fmtPct(cumOrigTotal)}</td>`;
+    }
+    PERIODS.forEach(() => {
+      if (attentionOn) {
+        html += `<td><span class="kpi-adj-val">${perPeriodReach.toFixed(1)} %</span></td>`;
+      } else {
+        html += `<td>${perPeriodReach.toFixed(1)} %</td>`;
+      }
+    });
+    html += '</tr>';
+
+    /* Row 3: Revenue */
+    html += '<tr>';
+    html += '<td>Revenue</td>';
+    html += `<td>${fmtNum(totalRevenue)}</td>`;
+    REVENUE_PERIODS.forEach(v => {
+      html += `<td>${fmtNum(v)}</td>`;
+    });
+    html += '</tr>';
+
+    kpiTotalsBody.innerHTML = html;
   }
 
-  // ─── KPI Channels ────────────────────────────────────────────────────────────
+  /* ═══════════════════════════════════════════════
+     KPI CHANNELS TABLE
+  ═══════════════════════════════════════════════ */
   function renderKPIChannels() {
-    kpiChannelsTbl.innerHTML = '';
+    let html = '';
+    const perPeriod = 8.2;
     RAW.forEach(row => {
-      const adj = getAdjValues(row);
-      const tr = document.createElement('tr');
-      let html = `<td style="font-weight:500;">${row.channel}</td>`;
-      if (attentionOn) {
-        html += `<td><span class="cell-adj">${fmtPct(adj.cumReachAdj)}</span></td>`;
-        html += `<td><span class="cell-adj">${fmtPct(adj.decayAdj)}</span></td>`;
+      const adj = getAdj(row);
+      html += '<tr>';
+      html += `<td>${row.channel}</td>`;
+      if (attentionOn && !row.noAtt) {
+        html += `<td><span class="kpi-adj-val">${fmtPct(adj.cumReachAdj)}</span><span class="kpi-orig-sub">${row.cumReachOrig.toFixed(1)}</span></td>`;
+        PERIODS.forEach(() => {
+          html += `<td><span class="kpi-adj-val">${perPeriod.toFixed(1)} %</span></td>`;
+        });
       } else {
         html += `<td>${fmtPct(row.cumReachOrig)}</td>`;
-        html += `<td>${fmtPct(row.decayOrig)}</td>`;
+        PERIODS.forEach(() => {
+          html += `<td>${perPeriod.toFixed(1)} %</td>`;
+        });
       }
-      tr.innerHTML = html;
-      kpiChannelsTbl.appendChild(tr);
+      html += '</tr>';
+    });
+    kpiChannelsBody.innerHTML = html;
+  }
+
+  /* ═══════════════════════════════════════════════
+     FLIGHTING CHART (SVG Stacked Bars)
+  ═══════════════════════════════════════════════ */
+  const BUDGET_SHARES = RAW.map(r => r.budgetShare);
+  const SHARE_TOTAL   = BUDGET_SHARES.reduce((a,b) => a+b, 0);
+
+  function drawChart() {
+    const container = flightingSvg.parentElement;
+    const W = container.clientWidth || 900;
+    const H = 300;
+    flightingSvg.setAttribute('width', W);
+    flightingSvg.setAttribute('height', H);
+    flightingSvg.innerHTML = '';
+
+    const totals = chartMode === 'budget' ? BUDGET_TOTALS
+                 : chartMode === 'weight' ? WEIGHT_TOTALS
+                 : ADSTOCK_TOTALS;
+
+    const padLeft = 68, padRight = 20, padTop = 20, padBottom = 36;
+    const chartW = W - padLeft - padRight;
+    const chartH = H - padTop - padBottom;
+    const n = totals.length;
+
+    const maxVal = Math.max(...totals) * 1.15;
+    const barGroupW = chartW / n;
+    const barW = barGroupW * 0.65;
+    const barOffset = (barGroupW - barW) / 2;
+
+    /* Grid lines */
+    const numGridLines = 5;
+    for (let i = 0; i <= numGridLines; i++) {
+      const y = padTop + chartH - (i / numGridLines) * chartH;
+      const val = (maxVal * i / numGridLines);
+      /* Grid line */
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', padLeft); line.setAttribute('x2', padLeft + chartW);
+      line.setAttribute('y1', y); line.setAttribute('y2', y);
+      line.setAttribute('stroke', '#F3F4F6'); line.setAttribute('stroke-width', '1');
+      flightingSvg.appendChild(line);
+      /* Y label */
+      const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      lbl.setAttribute('x', padLeft - 6);
+      lbl.setAttribute('y', y + 4);
+      lbl.setAttribute('text-anchor', 'end');
+      lbl.setAttribute('font-size', '10');
+      lbl.setAttribute('fill', '#9CA3AF');
+      lbl.setAttribute('font-family', 'Inter, sans-serif');
+      let lblText = '';
+      if (chartMode === 'budget') {
+        lblText = val >= 1e6 ? (val/1e6).toFixed(1)+'M' : val >= 1000 ? (val/1000).toFixed(0)+'K' : val.toFixed(0);
+        lblText = '$' + lblText;
+      } else {
+        lblText = val >= 1000 ? (val/1000).toFixed(0)+'K' : val.toFixed(0);
+      }
+      lbl.textContent = lblText;
+      flightingSvg.appendChild(lbl);
+    }
+
+    /* Stacked bars */
+    totals.forEach((total, periodIdx) => {
+      const x = padLeft + periodIdx * barGroupW + barOffset;
+      let yBase = padTop + chartH;
+
+      RAW.forEach((row, rowIdx) => {
+        const share = row.budgetShare / SHARE_TOTAL;
+        const segVal = total * share;
+        const segH = (segVal / maxVal) * chartH;
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', x);
+        rect.setAttribute('y', yBase - segH);
+        rect.setAttribute('width', barW);
+        rect.setAttribute('height', segH);
+        rect.setAttribute('fill', CHANNEL_COLORS[row.channel] || '#9CA3AF');
+        /* Rounded top on the top segment */
+        if (rowIdx === 0) {
+          rect.setAttribute('rx', '3');
+          rect.setAttribute('ry', '3');
+        }
+        flightingSvg.appendChild(rect);
+        yBase -= segH;
+      });
+
+      /* X label */
+      const xlbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      xlbl.setAttribute('x', x + barW / 2);
+      xlbl.setAttribute('y', padTop + chartH + 16);
+      xlbl.setAttribute('text-anchor', 'middle');
+      xlbl.setAttribute('font-size', '10');
+      xlbl.setAttribute('fill', '#9CA3AF');
+      xlbl.setAttribute('font-family', 'Inter, sans-serif');
+      xlbl.textContent = PERIODS[periodIdx];
+      flightingSvg.appendChild(xlbl);
+    });
+
+    /* Trend lines */
+    const reachOrig  = RAW.reduce((s,r) => s + r.cumReachOrig, 0);
+    const decayOrig  = RAW.reduce((s,r) => s + r.decayOrig, 0);
+    const reachAdj   = RAW.reduce((s,r) => s + getAdj(r).cumReachAdj, 0);
+    const decayAdj   = RAW.reduce((s,r) => s + getAdj(r).decayAdj, 0);
+    const totalRev   = RAW.reduce((s,r) => s + r.revenue, 0);
+
+    // Normalise reach/revenue to chart height as fraction of maxVal
+    // Use revenue scale relative to its own max for visual interest
+    const reachScale  = maxVal; // treat as "same scale"
+    const revMax      = totalRev * 1.2;
+
+    const cumReachPoints = totals.map((t, i) => {
+      const frac = attentionOn
+        ? (reachAdj / (reachOrig || 1)) * (t / maxVal)
+        : (t / maxVal);
+      const cy = padTop + chartH - (frac * chartH * 0.7);
+      const cx = padLeft + i * barGroupW + barGroupW / 2;
+      return `${cx},${cy}`;
+    });
+
+    const decayPoints = totals.map((t, i) => {
+      const frac = attentionOn
+        ? (decayAdj / (decayOrig || 1)) * (t / maxVal)
+        : (t / maxVal);
+      const cy = padTop + chartH - (frac * chartH * 0.6);
+      const cx = padLeft + i * barGroupW + barGroupW / 2;
+      return `${cx},${cy}`;
+    });
+
+    const revPoints = REVENUE_PERIODS.map((rv, i) => {
+      const cy = padTop + chartH - (rv / revMax) * chartH * 0.5;
+      const cx = padLeft + i * barGroupW + barGroupW / 2;
+      return `${cx},${cy}`;
+    });
+
+    function makeTrendLine(points, color, dash) {
+      const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+      poly.setAttribute('points', points.join(' '));
+      poly.setAttribute('fill', 'none');
+      poly.setAttribute('stroke', color);
+      poly.setAttribute('stroke-width', '2');
+      poly.setAttribute('stroke-dasharray', dash || '');
+      poly.setAttribute('stroke-linecap', 'round');
+      poly.setAttribute('stroke-linejoin', 'round');
+      flightingSvg.appendChild(poly);
+    }
+
+    makeTrendLine(decayPoints,    '#F97316', '5,4');
+    makeTrendLine(cumReachPoints, '#4F6BED', '5,4');
+    makeTrendLine(revPoints,      '#EF4444', '5,4');
+
+    /* Legend */
+    renderChartLegend();
+  }
+
+  function renderChartLegend() {
+    chartLegend.innerHTML = '';
+    RAW.forEach(row => {
+      const item = document.createElement('div');
+      item.className = 'legend-item';
+      item.innerHTML = `<span class="legend-dot" style="background:${CHANNEL_COLORS[row.channel]}"></span>${row.channel}`;
+      chartLegend.appendChild(item);
+    });
+    /* Trend line legend */
+    [
+      { color:'#F97316', label:'Reach w. Decay @1+ (all)' },
+      { color:'#4F6BED', label:'Cumulative Reach @1+ (all)' },
+      { color:'#EF4444', label:'Estimated Revenue' },
+    ].forEach(({ color, label }) => {
+      const item = document.createElement('div');
+      item.className = 'legend-item';
+      item.innerHTML = `<span class="legend-line" style="background:${color};border-top:2px dashed ${color};background:none;height:0;border-width:2px;"></span>${label}`;
+      chartLegend.appendChild(item);
     });
   }
 
-  // ─── Flighting Segmented Control ─────────────────────────────────────────────
+  /* ═══════════════════════════════════════════════
+     ATTENTION TOGGLE
+  ═══════════════════════════════════════════════ */
+  function applyAttentionState() {
+    attentionOn = attToggle.checked;
+
+    /* Badge on scenario card */
+    scBadgeAttAdj.classList.toggle('visible', attentionOn);
+
+    /* Export button */
+    exportBtn.classList.toggle('visible', attentionOn);
+
+    /* Add .attention-on class to table & card for CSS-driven changes */
+    mainTable.classList.toggle('attention-on', attentionOn);
+    tableCard.classList.toggle('attention-on', attentionOn);
+
+    /* Re-render */
+    renderTable();
+    renderKPITotals();
+    renderKPIChannels();
+    drawChart();
+  }
+
+  attToggle.addEventListener('change', applyAttentionState);
+
+  /* ═══════════════════════════════════════════════
+     FLIGHTING SUMMARY TABS
+  ═══════════════════════════════════════════════ */
   segTotalsBtn.addEventListener('click', () => {
     segTotalsBtn.classList.add('active');
     segChannelsBtn.classList.remove('active');
@@ -1024,169 +1766,22 @@
     renderKPIChannels();
   });
 
-  // ─── Flighting Chart ─────────────────────────────────────────────────────────
-  const WEEKS = ['W1','W2','W3','W4','W5','W6','W7','W8'];
-  const BUDGET_DATA = [680000, 720000, 695000, 710000, 680000, 695000, 670000, 600000];
-  const WEIGHT_DATA = [65000, 72000, 68000, 71000, 65000, 68000, 62000, 58000];
-  // Adstock: each week = weight * 1.12 + prev_week_adstock * 0.25 (simplified decay)
-  const ADSTOCK_DATA = (() => {
-    let prev = 0;
-    return WEIGHT_DATA.map(w => {
-      const v = w + prev * 0.28;
-      prev = v;
-      return Math.round(v);
+  /* ═══════════════════════════════════════════════
+     CHART SEGMENTED CONTROL
+  ═══════════════════════════════════════════════ */
+  chartSegCtrl.querySelectorAll('.seg-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      chartSegCtrl.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      chartMode = this.dataset.mode;
+      drawChart();
     });
-  })();
-
-  let chartMode = 'budget'; // budget | weight | adstock
-
-  const chartCanvas = document.getElementById('flightingChart');
-  const chartXLabels = document.getElementById('chartXLabels');
-
-  function drawChart() {
-    const ctx = chartCanvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
-    const cssWidth = chartCanvas.parentElement.clientWidth;
-    const cssHeight = 200;
-    chartCanvas.width  = cssWidth * dpr;
-    chartCanvas.height = cssHeight * dpr;
-    chartCanvas.style.width  = cssWidth + 'px';
-    chartCanvas.style.height = cssHeight + 'px';
-    ctx.scale(dpr, dpr);
-
-    const data = chartMode === 'budget' ? BUDGET_DATA
-               : chartMode === 'weight' ? WEIGHT_DATA
-               : ADSTOCK_DATA;
-    const color = '#4F6BED';
-    const bgColor = '#EEF2FF';
-
-    const padLeft = 56, padRight = 12, padTop = 12, padBottom = 4;
-    const w = cssWidth - padLeft - padRight;
-    const h = cssHeight - padTop - padBottom;
-
-    ctx.clearRect(0, 0, cssWidth, cssHeight);
-
-    const maxVal = Math.max(...data) * 1.12;
-    const barWidth = (w / data.length) * 0.6;
-    const barGap   = (w / data.length) * 0.4;
-    const numGridLines = 4;
-
-    // Grid lines + Y labels
-    ctx.font = '10px Inter, sans-serif';
-    ctx.fillStyle = '#9CA3AF';
-    ctx.textAlign = 'right';
-    for (let i = 0; i <= numGridLines; i++) {
-      const y = padTop + h - (i / numGridLines) * h;
-      const val = (maxVal * i / numGridLines);
-      ctx.strokeStyle = '#F3F4F6';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(padLeft, y);
-      ctx.lineTo(padLeft + w, y);
-      ctx.stroke();
-      const label = chartMode === 'budget'
-        ? '$' + (val >= 1000000 ? (val/1000000).toFixed(1)+'M' : val >= 1000 ? (val/1000).toFixed(0)+'K' : val.toFixed(0))
-        : (val >= 1000 ? (val/1000).toFixed(0)+'K' : val.toFixed(0));
-      ctx.fillText(label, padLeft - 4, y + 3.5);
-    }
-
-    // Bars
-    data.forEach((val, i) => {
-      const barH = (val / maxVal) * h;
-      const x = padLeft + i * (w / data.length) + barGap / 2;
-      const y = padTop + h - barH;
-
-      // Shadow/bg fill
-      ctx.fillStyle = bgColor;
-      ctx.beginPath();
-      ctx.roundRect(x, padTop, barWidth, h, [3]);
-      ctx.fill();
-
-      // Main bar
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.roundRect(x, y, barWidth, barH, [3, 3, 0, 0]);
-      ctx.fill();
-
-      // Value label on bar
-      if (barH > 18) {
-        ctx.fillStyle = '#fff';
-        ctx.font = '9px Inter, sans-serif';
-        ctx.textAlign = 'center';
-        const lbl = chartMode === 'budget'
-          ? '$' + (val/1000).toFixed(0)+'K'
-          : (val/1000).toFixed(0)+'K';
-        ctx.fillText(lbl, x + barWidth / 2, y + 13);
-      }
-    });
-
-    // X-axis week labels
-    chartXLabels.innerHTML = '';
-    WEEKS.forEach(w => {
-      const span = document.createElement('span');
-      span.textContent = w;
-      chartXLabels.appendChild(span);
-    });
-  }
-
-  // Chart mode buttons
-  document.getElementById('chartSegBudget').addEventListener('click', function () {
-    setChartMode('budget');
-    document.querySelectorAll('.chart-header .seg-btn').forEach(b => b.classList.remove('active'));
-    this.classList.add('active');
-  });
-  document.getElementById('chartSegWeight').addEventListener('click', function () {
-    setChartMode('weight');
-    document.querySelectorAll('.chart-header .seg-btn').forEach(b => b.classList.remove('active'));
-    this.classList.add('active');
-  });
-  document.getElementById('chartSegAdstock').addEventListener('click', function () {
-    setChartMode('adstock');
-    document.querySelectorAll('.chart-header .seg-btn').forEach(b => b.classList.remove('active'));
-    this.classList.add('active');
   });
 
-  function setChartMode(mode) {
-    chartMode = mode;
-    drawChart();
-  }
-
-  // ─── Attention Toggle ─────────────────────────────────────────────────────────
-  toggleEl.addEventListener('change', function () {
-    attentionOn = this.checked;
-
-    // Sidebar collapse
-    sidebarEl.classList.toggle('collapsed', attentionOn);
-
-    // Badge
-    badgeAttEl.classList.toggle('visible', attentionOn);
-
-    // Export button
-    exportBtn.classList.toggle('visible', attentionOn);
-
-    // Table section class for CSS col visibility
-    tableSection.classList.toggle('attention-on', attentionOn);
-    // Also need to apply to table for th-adj-label
-    document.getElementById('mainTable').classList.toggle('attention-on', attentionOn);
-    // Apply to KPI section
-    document.getElementById('flightingSummarySection').classList.toggle('attention-on', attentionOn);
-
-    // Re-render
-    renderTable();
-    renderKPIChannels();
-    updateKPITotals();
-  });
-
-  // Need attention-on class on the table for th-adj-label to show
-  // (CSS selector is .attention-on .th-adj-label)
-  // So we apply it to the table wrapper too
-  // Re-check: selector is `.attention-on .th-adj-label` — needs ancestor with class.
-  // We set it on #mainTable and #tableSection, both should work.
-
-  // ─── Export ──────────────────────────────────────────────────────────────────
-  exportBtn.addEventListener('click', exportXLSX);
-
-  function exportXLSX() {
+  /* ═══════════════════════════════════════════════
+     EXPORT
+  ═══════════════════════════════════════════════ */
+  exportBtn.addEventListener('click', () => {
     const headers = [
       'Channel Name',
       'Attention Threshold',
@@ -1200,14 +1795,13 @@
       'Reach w. Decay @1+ (Adjusted)',
       'Budget Share %',
       'Budget',
-      'Revenue'
+      'Revenue',
     ];
-
     const rows = RAW.map(row => {
-      const adj = getAdjValues(row);
+      const adj = getAdj(row);
       return [
         row.channel,
-        row.noAtt ? 'NO ATTENTION' : channelThresholds[row.channel],
+        row.noAtt ? 'NO ATTENTION' : thresholds[row.channel],
         row.costOrig,
         row.noAtt ? 'N/A' : (row.costAdj != null ? row.costAdj : 'N/A'),
         row.weightOrig,
@@ -1216,36 +1810,29 @@
         fmtPct(adj.cumReachAdj),
         row.decayOrig + '%',
         fmtPct(adj.decayAdj),
-        row.budgetShare,
+        row.budgetShare + '%',
         row.budget,
-        row.revenue
+        row.revenue,
       ];
     });
-
-    const wsData = [headers, ...rows];
     const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-
-    // Column widths
-    ws['!cols'] = headers.map((h, i) => ({ wch: Math.max(h.length, 18) }));
-
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    ws['!cols'] = headers.map(h => ({ wch: Math.max(h.length + 2, 18) }));
     XLSX.utils.book_append_sheet(wb, ws, 'Attention Adjustments');
     XLSX.writeFile(wb, 'attention_adjustments_export.xlsx');
-  }
-
-  // ─── Init ────────────────────────────────────────────────────────────────────
-  function init() {
-    renderTable();
-    renderKPIChannels();
-    updateKPITotals();
-    // Defer chart draw until layout settles
-    setTimeout(drawChart, 50);
-  }
-
-  window.addEventListener('resize', () => {
-    drawChart();
   });
 
+  /* ═══════════════════════════════════════════════
+     INIT
+  ═══════════════════════════════════════════════ */
+  function init() {
+    renderTable();
+    renderKPITotals();
+    renderKPIChannels();
+    setTimeout(drawChart, 60);
+  }
+
+  window.addEventListener('resize', drawChart);
   init();
 
 })();
