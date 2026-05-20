@@ -630,6 +630,7 @@
       overflow: hidden;
       margin-bottom: 6px;
     }
+    /* CHANGE 2: table-wrap must scroll horizontally */
     .table-wrap {
       overflow-x: auto;
     }
@@ -641,7 +642,8 @@
     thead tr {
       background: #F9FAFB;
     }
-    th {
+    /* CHANGE 1: thead th — allow wrapping, set line-height and vertical-align */
+    thead th {
       padding: 9px 14px;
       text-align: right;
       font-size: 11px;
@@ -650,16 +652,18 @@
       letter-spacing: 0.04em;
       color: #6B7280;
       border-bottom: 1px solid #E5E7EB;
-      white-space: nowrap;
+      white-space: normal;
       user-select: none;
       cursor: pointer;
+      line-height: 1.3;
+      vertical-align: bottom;
     }
-    th:first-child { text-align: left; }
-    th.col-threshold-head { text-align: left; }
+    thead th:first-child { text-align: left; }
+    thead th.col-threshold-head { text-align: left; }
 
     .th-inner {
       display: inline-flex;
-      align-items: center;
+      align-items: flex-end;
       gap: 4px;
     }
     .th-sort { color: #D1D5DB; font-size: 10px; }
@@ -700,6 +704,70 @@
     /* Column visibility */
     .col-threshold { display: none; text-align: left; }
     .attention-on .col-threshold { display: table-cell; }
+
+    /* ── CHANGE 2: Sticky columns ──────────────────────────── */
+    /* Channel column: always sticky */
+    thead th:first-child,
+    tbody td:first-child,
+    tfoot td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: #fff;
+    }
+    thead th:first-child {
+      background: #F9FAFB;
+      z-index: 3;
+    }
+    tfoot tr.total-row td:first-child {
+      background: #F9FAFB;
+    }
+    tr:hover td:first-child {
+      background: #F9FAFB;
+    }
+    tr.total-row:hover td:first-child {
+      background: #F2F4FF;
+    }
+
+    /* Threshold column: sticky only when attention-on */
+    .attention-on thead th.col-threshold-head {
+      position: sticky;
+      left: 120px;
+      z-index: 3;
+      background: #F9FAFB;
+      box-shadow: 2px 0 4px rgba(0,0,0,0.06);
+    }
+    .attention-on tbody td.col-threshold {
+      position: sticky;
+      left: 120px;
+      z-index: 2;
+      background: #fff;
+      box-shadow: 2px 0 4px rgba(0,0,0,0.06);
+    }
+    .attention-on tfoot td.col-threshold {
+      position: sticky;
+      left: 120px;
+      z-index: 2;
+      background: #F9FAFB;
+      box-shadow: 2px 0 4px rgba(0,0,0,0.06);
+    }
+    .attention-on tr:hover td.col-threshold {
+      background: #F9FAFB;
+    }
+    .attention-on tr.total-row:hover td.col-threshold {
+      background: #F2F4FF;
+    }
+
+    /* When attention is OFF, only the channel column needs the shadow */
+    thead th:first-child {
+      box-shadow: 2px 0 4px rgba(0,0,0,0.06);
+    }
+    /* But when attention is ON, the shadow moves to the threshold column — hide it from first */
+    .attention-on thead th:first-child,
+    .attention-on tbody td:first-child,
+    .attention-on tfoot td:first-child {
+      box-shadow: none;
+    }
 
     /* Cell styles */
     .cell-channel-name {
@@ -790,6 +858,21 @@
       transition: background 150ms;
     }
     .btn-calc:hover { background: #F0FDF9; }
+
+    /* Period column cells in main table */
+    th.period-col {
+      min-width: 85px;
+      font-size: 10px;
+      color: #6B7280;
+      text-align: right;
+      font-weight: 500;
+    }
+    td.period-col {
+      font-size: 12px;
+      color: #374151;
+      text-align: right;
+      padding: 0 10px;
+    }
 
     /* ── Flighting Summary ────────────────────────────────── */
     .section-card {
@@ -1091,14 +1174,14 @@
               </span>
             </div>
           </div>
-          <!-- Flighting Strategy (disabled) -->
-          <div class="toggle-group">
+          <!-- CHANGE 3: Flighting Strategy toggle — enabled, with id -->
+          <div class="toggle-group" id="flightingToggleGroup">
             <label class="toggle-switch">
-              <input type="checkbox" disabled />
+              <input type="checkbox" id="flightingToggle" />
               <div class="toggle-track"></div>
               <div class="toggle-thumb"></div>
             </label>
-            <span class="toggle-label" style="color:#9CA3AF;">Flighting Strategy</span>
+            <span class="toggle-label">Flighting Strategy</span>
           </div>
         </div>
         <div class="table-toolbar-right">
@@ -1110,8 +1193,8 @@
             <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="4" cy="7" r="1.5" fill="#6B7280"/><circle cx="7" cy="7" r="1.5" fill="#6B7280"/><circle cx="10" cy="7" r="1.5" fill="#6B7280"/></svg>
             Manage Columns (6)
           </button>
-          <!-- Chart segmented control -->
-          <div class="seg-ctrl" id="chartSegCtrl">
+          <!-- CHANGE 4: Chart segmented control — hidden by default -->
+          <div class="seg-ctrl" id="chartSegCtrl" style="display:none">
             <button class="seg-btn active" data-mode="budget">Budget</button>
             <button class="seg-btn" data-mode="weight">Weight</button>
             <button class="seg-btn" data-mode="adstock">Weight + Adstock</button>
@@ -1125,11 +1208,12 @@
           <table id="mainTable">
             <thead>
               <tr>
+                <!-- CHANGE 1: Two-line headers via <br>, reduced min-widths -->
                 <th style="min-width:120px; text-align:left;">
                   <div class="th-inner">Channel <span class="th-sort">↑↓</span></div>
                 </th>
-                <th class="col-threshold col-threshold-head" style="min-width:150px;">
-                  <div class="th-inner">Attention Threshold</div>
+                <th class="col-threshold col-threshold-head" style="min-width:110px;">
+                  <div class="th-inner">Attention<br>Threshold</div>
                 </th>
                 <th style="min-width:110px;">
                   <div class="th-inner" style="justify-content:flex-end;">Cost <span class="th-sort">↑↓</span></div>
@@ -1137,22 +1221,22 @@
                 <th style="min-width:120px;">
                   <div class="th-inner" style="justify-content:flex-end;">Weight <span class="th-sort">↑↓</span></div>
                 </th>
-                <th style="min-width:110px;">
-                  <div class="th-inner" style="justify-content:flex-end;">Budget Share % <span class="th-sort">↑↓</span></div>
+                <th style="min-width:90px;">
+                  <div class="th-inner" style="justify-content:flex-end;">Budget<br>Share % <span class="th-sort">↑↓</span></div>
                 </th>
                 <th style="min-width:130px;">
                   <div class="th-inner" style="justify-content:flex-end;">Budget <span class="th-sort">↑↓</span></div>
                 </th>
-                <th class="col-cum-reach" style="min-width:130px;">
+                <th class="col-cum-reach" style="min-width:100px;">
                   <div class="th-inner" style="justify-content:flex-end;">
-                    Cum. Reach @1+
+                    Cum. Reach<br>@1+
                     <span class="th-adj-pill">ADJUSTED</span>
                     <span class="th-sort">↑↓</span>
                   </div>
                 </th>
-                <th class="col-decay" style="min-width:150px;">
+                <th class="col-decay" style="min-width:110px;">
                   <div class="th-inner" style="justify-content:flex-end;">
-                    Reach w. Decay @1+
+                    Reach w.<br>Decay @1+
                     <span class="th-adj-pill">ADJUSTED</span>
                     <span class="th-sort">↑↓</span>
                   </div>
@@ -1277,11 +1361,39 @@
   const ADSTOCK_TOTALS = [78000,85000,80000,84000,78000,82000,75000,71000,73000,68000,64000,59000];
   const REVENUE_PERIODS = [90000,200000,200000,200000,300000,300000,300000,300000,300000,90000,90000,250000];
 
+  /* CHANGE 5: Period data per channel */
+  const periodData = {
+    'Audio':        [148500,143000,137500,132000,126500,121000,115500,110000,104500,99000,93500,88000],
+    'Direct':       [99000, 95400, 91750, 88100, 84400, 80750, 77050, 73400, 69750, 66050, 62400, 58750],
+    'Display':      [79200, 76400, 73500, 70600, 67700, 64800, 61900, 59000, 56100, 53200, 50300, 47400],
+    'OOH':          [74250, 71500, 68750, 66000, 63250, 60500, 57750, 55000, 52250, 49500, 46750, 44000],
+    'Print':        [49500, 47700, 45850, 44000, 42150, 40350, 38500, 36700, 34850, 33050, 31200, 29400],
+    'Retail':       [29700, 28600, 27500, 26400, 25300, 24200, 23100, 22000, 20900, 19800, 18700, 17600],
+    'Search':       [14850, 14300, 13750, 13200, 12650, 12100, 11550, 11000, 10450, 9900,  9350,  8800],
+    'Social':       [14850, 14300, 13750, 13200, 12650, 12100, 11550, 11000, 10450, 9900,  9350,  8800],
+    'Online Video': [14850, 14300, 13750, 13200, 12650, 12100, 11550, 11000, 10450, 9900,  9350,  8800],
+    'TV-Streaming': [14850, 14300, 13750, 13200, 12650, 12100, 11550, 11000, 10450, 9900,  9350,  8800],
+  };
+  const periodDataWeight = {
+    'Audio':        [2940,2835,2730,2625,2520,2415,2310,2205,2100,1995,1890,1785],
+    'Direct':       [8170,7875,7580,7285,6990,6695,6400,6110,5815,5520,5225,4930],
+    'Display':      [12345,11900,11450,10985,10535,10085,9635,9185,8735,8290,7840,7390],
+    'OOH':          [5400,5200,5010,4815,4620,4420,4225,4030,3830,3635,3440,3240],
+    'Print':        [10955,10560,10160,9760,9360,8965,8565,8165,7765,7365,6965,6570],
+    'Retail':       [4320,4165,4005,3845,3690,3530,3370,3215,3055,2895,2740,2580],
+    'Search':       [7095,6840,6580,6320,6060,5800,5545,5285,5025,4765,4510,4250],
+    'Social':       [9860,9505,9145,8785,8430,8070,7710,7355,6995,6635,6280,5920],
+    'Online Video': [1540,1485,1430,1375,1320,1265,1210,1155,1100,1045,990,935],
+    'TV-Streaming': [12345,11900,11450,10985,10535,10085,9635,9185,8735,8290,7840,7390],
+  };
+
   /* ═══════════════════════════════════════════════
      STATE
   ═══════════════════════════════════════════════ */
-  let attentionOn = false;
-  let chartMode   = 'budget';
+  let attentionOn  = false;
+  let chartMode    = 'budget';
+  let flightingOn  = false;
+  let flightMode   = 'budget'; // tracks the seg ctrl mode for period columns
   const thresholds = {};
   RAW.forEach(r => { thresholds[r.channel] = '1 SEC'; });
 
@@ -1326,6 +1438,11 @@
   function fmtRevenue(v) { return 'USD ' + v.toLocaleString('en-US'); }
   function metricBadge(unit) { return `<span class="metric-badge">${unit}</span>`; }
 
+  /* Format with space as thousands separator (e.g. "125 000") */
+  function fmtPeriodVal(v) {
+    return Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
+
   /* ═══════════════════════════════════════════════
      SIDEBAR COLLAPSE
   ═══════════════════════════════════════════════ */
@@ -1347,6 +1464,7 @@
     RAW.forEach(row => {
       const adj = getAdj(row);
       const tr = document.createElement('tr');
+      tr.setAttribute('data-channel', row.channel);
       let html = '';
 
       /* Channel */
@@ -1410,6 +1528,11 @@
         renderTable();
         renderKPITotals();
         renderKPIChannels();
+        /* Re-inject period columns if flighting is on */
+        if (flightingOn) {
+          removePeriodColumns();
+          injectPeriodColumns();
+        }
       });
     });
 
@@ -1550,6 +1673,78 @@
       html += '</tr>';
     });
     kpiChannelsBody.innerHTML = html;
+  }
+
+  /* ═══════════════════════════════════════════════
+     CHANGE 5: FLIGHTING COLUMNS
+  ═══════════════════════════════════════════════ */
+  function getPeriodValues(channelName, mode) {
+    if (mode === 'weight') {
+      return periodDataWeight[channelName] || PERIODS.map(() => 0);
+    } else if (mode === 'adstock') {
+      return (periodDataWeight[channelName] || PERIODS.map(() => 0)).map(v => v * 1.15);
+    } else {
+      /* budget (default) */
+      return periodData[channelName] || PERIODS.map(() => 0);
+    }
+  }
+
+  function removePeriodColumns() {
+    mainTable.querySelectorAll('.period-col').forEach(el => el.remove());
+  }
+
+  function injectPeriodColumns() {
+    /* Add header cells */
+    const headerRow = mainTable.querySelector('thead tr');
+    PERIODS.forEach(p => {
+      const th = document.createElement('th');
+      th.className = 'period-col';
+      th.textContent = p;
+      headerRow.appendChild(th);
+    });
+
+    /* Add data cells per channel row */
+    const dataRows = tableBody.querySelectorAll('tr[data-channel]');
+    dataRows.forEach(tr => {
+      const ch = tr.getAttribute('data-channel');
+      const vals = getPeriodValues(ch, flightMode);
+      vals.forEach(v => {
+        const td = document.createElement('td');
+        td.className = 'period-col';
+        td.textContent = fmtPeriodVal(v);
+        tr.appendChild(td);
+      });
+    });
+
+    /* Add total row cells */
+    const totalTr = tableFoot.querySelector('tr.total-row');
+    if (totalTr) {
+      PERIODS.forEach((_, pIdx) => {
+        const colSum = RAW.reduce((s, row) => {
+          const vals = getPeriodValues(row.channel, flightMode);
+          return s + (vals[pIdx] || 0);
+        }, 0);
+        const td = document.createElement('td');
+        td.className = 'period-col';
+        td.textContent = fmtPeriodVal(colSum);
+        totalTr.appendChild(td);
+      });
+    }
+  }
+
+  function toggleFlightingColumns(on) {
+    removePeriodColumns();
+    if (on) {
+      injectPeriodColumns();
+    }
+  }
+
+  function updatePeriodColumnValues() {
+    /* Re-render period cells in place without full rebuild */
+    removePeriodColumns();
+    if (flightingOn) {
+      injectPeriodColumns();
+    }
   }
 
   /* ═══════════════════════════════════════════════
@@ -1744,9 +1939,25 @@
     renderKPITotals();
     renderKPIChannels();
     drawChart();
+
+    /* Re-inject period columns if flighting is on */
+    if (flightingOn) {
+      toggleFlightingColumns(true);
+    }
   }
 
   attToggle.addEventListener('change', applyAttentionState);
+
+  /* ═══════════════════════════════════════════════
+     CHANGE 3 & 4: FLIGHTING TOGGLE
+  ═══════════════════════════════════════════════ */
+  document.getElementById('flightingToggle').addEventListener('change', function () {
+    flightingOn = this.checked;
+    /* show/hide segmented control */
+    document.getElementById('chartSegCtrl').style.display = flightingOn ? 'flex' : 'none';
+    /* add/remove period columns */
+    toggleFlightingColumns(flightingOn);
+  });
 
   /* ═══════════════════════════════════════════════
      FLIGHTING SUMMARY TABS
@@ -1773,7 +1984,10 @@
       chartSegCtrl.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
       this.classList.add('active');
       chartMode = this.dataset.mode;
+      flightMode = this.dataset.mode;
       drawChart();
+      /* Re-render period column values when mode changes */
+      updatePeriodColumnValues();
     });
   });
 

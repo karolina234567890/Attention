@@ -489,7 +489,6 @@
       color: #374151;
       white-space: nowrap;
     }
-    .toggle-label.muted { color: #9CA3AF; }
 
     /* Info icon + tooltip */
     .info-icon {
@@ -661,10 +660,11 @@
       letter-spacing: 0.04em;
       color: #6B7280;
       border-bottom: 1px solid #E5E7EB;
-      white-space: nowrap;
       position: sticky;
       top: 0;
       z-index: 2;
+      line-height: 1.3;
+      vertical-align: bottom;
     }
     thead th.th-channel {
       position: sticky;
@@ -688,8 +688,13 @@
       text-transform: uppercase;
       padding: 1px 5px;
       border-radius: 8px;
-      margin-left: 4px;
+      margin-left: 2px;
       vertical-align: middle;
+    }
+    .adj-sep {
+      color: #9CA3AF;
+      font-weight: 400;
+      margin: 0 2px;
     }
 
     /* Rows */
@@ -808,6 +813,43 @@
       to   { opacity: 1; }
     }
 
+    /* ── Sticky columns when attention is ON ── */
+    /* Channel th is always sticky (z-index 3 already set above) */
+    /* When .attention-on is active, threshold col also becomes sticky */
+    .attention-on thead th.col-threshold {
+      position: sticky;
+      left: 150px;
+      z-index: 3;
+      background: #F9FAFB;
+      box-shadow: 2px 0 6px rgba(0,0,0,0.06);
+    }
+    .attention-on td.col-threshold {
+      position: sticky;
+      left: 150px;
+      z-index: 2;
+      background: #FFFFFF;
+      box-shadow: 2px 0 6px rgba(0,0,0,0.06);
+    }
+    /* tfoot threshold cell when attention on */
+    .attention-on tfoot td.col-threshold {
+      position: sticky;
+      left: 150px;
+      z-index: 2;
+      background: #F9FAFB;
+      box-shadow: 2px 0 6px rgba(0,0,0,0.06);
+    }
+    /* When attention is OFF, channel col stays sticky */
+    thead th.th-channel {
+      position: sticky;
+      left: 0;
+      z-index: 3;
+    }
+    td.td-channel {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+    }
+
     /* tfoot */
     tfoot td {
       background: #F9FAFB;
@@ -840,6 +882,27 @@
       margin: 14px 20px;
     }
     .btn-calc-kpis:hover { background: #F0FDF9; }
+
+    /* Period columns */
+    .period-col th, thead th.period-col {
+      min-width: 85px;
+      font-size: 10px;
+      color: #6B7280;
+      text-align: right;
+      font-weight: 500;
+    }
+    td.period-col {
+      font-size: 12px;
+      color: #374151;
+      text-align: right;
+      padding: 0 10px;
+    }
+    tfoot td.period-col {
+      font-size: 12px;
+      color: #374151;
+      text-align: right;
+      padding: 0 10px;
+    }
 
     /* ── Flighting Summary ── */
     .section-card {
@@ -1164,12 +1227,12 @@
 
             <div class="toggle-divider"></div>
 
-            <!-- Flighting Strategy toggle (OFF / disabled appearance) -->
+            <!-- Flighting Strategy toggle -->
             <div class="toggle-control">
               <div class="toggle-label-wrap">
-                <span class="toggle-label muted">Flighting Strategy</span>
+                <span class="toggle-label">Flighting Strategy</span>
               </div>
-              <div class="toggle-switch" style="opacity:0.4;cursor:default;"></div>
+              <div class="toggle-switch" id="flightingToggle" role="switch" aria-checked="false" tabindex="0"></div>
             </div>
           </div>
 
@@ -1183,7 +1246,7 @@
               </svg>
               Manage Columns (6)
             </button>
-            <div class="segmented-control" id="viewSegControl">
+            <div class="segmented-control" id="viewSegControl" style="display:none">
               <button class="seg-btn active" data-view="budget">Budget</button>
               <button class="seg-btn" data-view="weight">Weight</button>
               <button class="seg-btn" data-view="adstock">Weight + Adstock</button>
@@ -1198,17 +1261,17 @@
               <thead>
                 <tr>
                   <th class="th-channel" style="min-width:150px">Channel</th>
-                  <th class="adj-col" style="min-width:140px">Attention Threshold</th>
+                  <th class="adj-col col-threshold" style="min-width:110px">Attention<br>Threshold</th>
                   <th id="thCost" style="min-width:110px">Cost</th>
-                  <th class="adj-col th-adj" style="min-width:120px">Cost ADJ. <span class="adj-pill">ADJ</span></th>
+                  <th class="adj-col th-adj" style="min-width:100px">Cost <span class="adj-sep">+</span> <span class="adj-pill">ADJ</span></th>
                   <th id="thWeight" style="min-width:110px">Weight</th>
-                  <th class="adj-col th-adj" style="min-width:125px">Weight ADJ. <span class="adj-pill">ADJ</span></th>
-                  <th style="min-width:110px">Budget Share %</th>
+                  <th class="adj-col th-adj" style="min-width:100px">Weight <span class="adj-sep">+</span> <span class="adj-pill">ADJ</span></th>
+                  <th style="min-width:90px">Budget<br>Share %</th>
                   <th style="min-width:125px">Budget</th>
-                  <th id="thReach" style="min-width:130px">Cum. Reach @1+</th>
-                  <th class="adj-col th-adj" style="min-width:150px">Cum. Reach ADJ. <span class="adj-pill">ADJ</span></th>
-                  <th id="thDecay" style="min-width:155px">Reach w. Decay @1+</th>
-                  <th class="adj-col th-adj" style="min-width:155px">Decay ADJ. <span class="adj-pill">ADJ</span></th>
+                  <th id="thReach" style="min-width:100px">Cum. Reach<br>@1+</th>
+                  <th class="adj-col th-adj" style="min-width:100px">Cum. Reach<br>@1+ <span class="adj-sep">+</span> <span class="adj-pill">ADJ</span></th>
+                  <th id="thDecay" style="min-width:110px">Reach w.<br>Decay @1+</th>
+                  <th class="adj-col th-adj" style="min-width:100px">Reach w.<br>Decay <span class="adj-sep">+</span> <span class="adj-pill">ADJ</span></th>
                   <th style="min-width:120px">Revenue</th>
                 </tr>
               </thead>
@@ -1308,6 +1371,8 @@
 
   // UI State
   let attentionOn = false;
+  let flightingOn = false;
+  let flightingMode = 'budget'; // 'budget' | 'weight' | 'adstock'
   let fsPanel = 'totals';
   let fsChannelMetric = 'cumReach';
   let chartMetric = 'budget';
@@ -1328,6 +1393,32 @@
   const FS_CUM_REACH_PER_PERIOD    = [8.2,8.2,8.2,8.2,8.2,8.2,8.2,8.2,8.2,8.2,8.2,8.2];
   const FS_REVENUE_PER_PERIOD      = [90000,200000,200000,200000,300000,300000,300000,300000,300000,90000,90000,90000];
 
+  /* Period data for flighting columns */
+  const periodData = {
+    'Audio':        [148500,143000,137500,132000,126500,121000,115500,110000,104500,99000,93500,88000],
+    'Direct':       [99000, 95400, 91750, 88100, 84400, 80750, 77050, 73400, 69750, 66050, 62400, 58750],
+    'Display':      [79200, 76400, 73500, 70600, 67700, 64800, 61900, 59000, 56100, 53200, 50300, 47400],
+    'OOH':          [74250, 71500, 68750, 66000, 63250, 60500, 57750, 55000, 52250, 49500, 46750, 44000],
+    'Print':        [49500, 47700, 45850, 44000, 42150, 40350, 38500, 36700, 34850, 33050, 31200, 29400],
+    'Retail':       [29700, 28600, 27500, 26400, 25300, 24200, 23100, 22000, 20900, 19800, 18700, 17600],
+    'Search':       [14850, 14300, 13750, 13200, 12650, 12100, 11550, 11000, 10450, 9900,  9350,  8800],
+    'Social':       [14850, 14300, 13750, 13200, 12650, 12100, 11550, 11000, 10450, 9900,  9350,  8800],
+    'Online Video': [14850, 14300, 13750, 13200, 12650, 12100, 11550, 11000, 10450, 9900,  9350,  8800],
+    'TV-Streaming': [14850, 14300, 13750, 13200, 12650, 12100, 11550, 11000, 10450, 9900,  9350,  8800],
+  };
+  const periodDataWeight = {
+    'Audio':        [2940,2835,2730,2625,2520,2415,2310,2205,2100,1995,1890,1785],
+    'Direct':       [8170,7875,7580,7285,6990,6695,6400,6110,5815,5520,5225,4930],
+    'Display':      [12345,11900,11450,10985,10535,10085,9635,9185,8735,8290,7840,7390],
+    'OOH':          [5400,5200,5010,4815,4620,4420,4225,4030,3830,3635,3440,3240],
+    'Print':        [10955,10560,10160,9760,9360,8965,8565,8165,7765,7365,6965,6570],
+    'Retail':       [4320,4165,4005,3845,3690,3530,3370,3215,3055,2895,2740,2580],
+    'Search':       [7095,6840,6580,6320,6060,5800,5545,5285,5025,4765,4510,4250],
+    'Social':       [9860,9505,9145,8785,8430,8070,7710,7355,6995,6635,6280,5920],
+    'Online Video': [1540,1485,1430,1375,1320,1265,1210,1155,1100,1045,990,935],
+    'TV-Streaming': [12345,11900,11450,10985,10535,10085,9635,9185,8735,8290,7840,7390],
+  };
+
   /* ======================================================
      HELPERS
   ====================================================== */
@@ -1342,12 +1433,111 @@
     };
   }
 
-  function fmtUSD(v)      { return 'USD ' + v.toLocaleString('en-US'); }
+  function fmtUSD(v)      { return 'USD ' + v.toLocaleString('en-US'); }
   function fmtComma(v)    { return Math.round(v).toLocaleString('en-US'); }
-  function fmtPct(v)      { return v.toFixed(1) + ' %'; }
+  function fmtPct(v)      { return v.toFixed(1) + ' %'; }
   function fmtCost(v)     { return v.toFixed(2); }
   function fmtKUSD(v)     { return (v / 1000).toFixed(0) + 'K'; }
-  function fmtRevCell(v)  { return 'USD ' + (v/1000).toFixed(0) + 'K'; }
+  function fmtRevCell(v)  { return 'USD ' + (v/1000).toFixed(0) + 'K'; }
+  function fmtSpace(v)    {
+    // Format number with space as thousands separator
+    return Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
+
+  /* ======================================================
+     FLIGHTING COLUMNS
+  ====================================================== */
+  function getPeriodValues(channelName, mode) {
+    if (mode === 'budget') {
+      return periodData[channelName] || Array(12).fill(0);
+    } else if (mode === 'weight') {
+      return periodDataWeight[channelName] || Array(12).fill(0);
+    } else {
+      // adstock: weight * 1.15
+      const w = periodDataWeight[channelName] || Array(12).fill(0);
+      return w.map(v => v * 1.15);
+    }
+  }
+
+  function toggleFlightingColumns(on) {
+    const table = document.getElementById('mainTable');
+    const thead = table.querySelector('thead tr');
+    const tbody = document.getElementById('tableBody');
+    const tfoot = document.getElementById('tableFoot');
+
+    if (!on) {
+      // Remove all period-col elements
+      table.querySelectorAll('.period-col').forEach(el => el.remove());
+      return;
+    }
+
+    // Add period headers to thead
+    PERIODS.forEach(p => {
+      const th = document.createElement('th');
+      th.className = 'period-col';
+      th.style.cssText = 'min-width:85px;font-size:10px;color:#6B7280;text-align:right;font-weight:500;white-space:nowrap;';
+      th.textContent = p;
+      thead.appendChild(th);
+    });
+
+    // Add period tds to each data row
+    Array.from(tbody.rows).forEach(tr => {
+      const channelName = tr.dataset.channel || '';
+      const vals = getPeriodValues(channelName, flightingMode);
+      vals.forEach(v => {
+        const td = document.createElement('td');
+        td.className = 'period-col';
+        td.style.cssText = 'font-size:12px;color:#374151;text-align:right;padding:0 10px;';
+        td.textContent = fmtSpace(v);
+        tr.appendChild(td);
+      });
+    });
+
+    // Add period tds to tfoot (totals)
+    if (tfoot.rows.length > 0) {
+      const footTr = tfoot.rows[0];
+      // Sum each period across all channels
+      PERIODS.forEach((p, pi) => {
+        const total = CHANNELS.reduce((sum, ch) => {
+          const vals = getPeriodValues(ch.name, flightingMode);
+          return sum + (vals[pi] || 0);
+        }, 0);
+        const td = document.createElement('td');
+        td.className = 'period-col';
+        td.style.cssText = 'font-size:12px;color:#374151;text-align:right;padding:0 10px;font-weight:600;';
+        td.textContent = fmtSpace(total);
+        footTr.appendChild(td);
+      });
+    }
+  }
+
+  function renderPeriodValues(mode) {
+    flightingMode = mode;
+    const tbody = document.getElementById('tableBody');
+    const tfoot = document.getElementById('tableFoot');
+
+    Array.from(tbody.rows).forEach(tr => {
+      const channelName = tr.dataset.channel || '';
+      const vals = getPeriodValues(channelName, mode);
+      const cells = tr.querySelectorAll('td.period-col');
+      cells.forEach((td, pi) => {
+        td.textContent = fmtSpace(vals[pi] || 0);
+      });
+    });
+
+    // Update tfoot period totals
+    if (tfoot.rows.length > 0) {
+      const footTr = tfoot.rows[0];
+      const cells = footTr.querySelectorAll('td.period-col');
+      cells.forEach((td, pi) => {
+        const total = CHANNELS.reduce((sum, ch) => {
+          const vals = getPeriodValues(ch.name, mode);
+          return sum + (vals[pi] || 0);
+        }, 0);
+        td.textContent = fmtSpace(total);
+      });
+    }
+  }
 
   /* ======================================================
      MAIN TABLE
@@ -1377,18 +1567,19 @@
     const adj = getAdj(ch, idx);
     const de = attentionOn ? ' de-emph' : '';
     const tr = document.createElement('tr');
+    tr.dataset.channel = ch.name;
 
     let html = '';
 
     // Channel
     html += `<td class="td-channel"><span class="channel-dot" style="background:${ch.color}"></span><span class="channel-name-text">${ch.name}</span></td>`;
 
-    // Attention Threshold (adj-col)
+    // Attention Threshold (adj-col col-threshold)
     if (isNoAtt) {
-      html += `<td class="adj-col"><span class="no-att-badge">NO ATTENTION</span></td>`;
+      html += `<td class="adj-col col-threshold"><span class="no-att-badge">NO ATTENTION</span></td>`;
     } else {
       const opts = THRESHOLD_OPTIONS.map(o => `<option value="${o}"${o===rowThresholds[idx]?' selected':''}>${o}</option>`).join('');
-      html += `<td class="adj-col"><select class="threshold-select" data-row="${idx}">${opts}</select></td>`;
+      html += `<td class="adj-col col-threshold"><select class="threshold-select" data-row="${idx}">${opts}</select></td>`;
     }
 
     // Cost (original)
@@ -1458,6 +1649,8 @@
 
   function buildTotalsRow() {
     const tfoot = document.getElementById('tableFoot');
+    // Save any existing period cells count before clearing
+    const hadPeriodCols = flightingOn;
     tfoot.innerHTML = '';
     const tr = document.createElement('tr');
 
@@ -1481,7 +1674,7 @@
 
     tr.innerHTML = `
       <td class="td-channel" style="font-weight:700">Totals</td>
-      <td class="adj-col"></td>
+      <td class="adj-col col-threshold"></td>
       <td class="${de}"></td>
       <td class="adj-col td-adj"></td>
       <td class="${de}"></td>
@@ -1495,6 +1688,21 @@
       <td>${fmtUSD(totalRevenue)}</td>
     `;
     tfoot.appendChild(tr);
+
+    // Re-add period cells if flighting is on
+    if (hadPeriodCols) {
+      PERIODS.forEach((p, pi) => {
+        const total = CHANNELS.reduce((sum, ch) => {
+          const vals = getPeriodValues(ch.name, flightingMode);
+          return sum + (vals[pi] || 0);
+        }, 0);
+        const td = document.createElement('td');
+        td.className = 'period-col';
+        td.style.cssText = 'font-size:12px;color:#374151;text-align:right;padding:0 10px;font-weight:600;';
+        td.textContent = fmtSpace(total);
+        tr.appendChild(td);
+      });
+    }
   }
 
   function updateOrigEmphasis() {
@@ -1546,21 +1754,21 @@
     const rows = [
       {
         label: 'Reach with decay @1+',
-        totalOrig: origDecayTotal.toFixed(1) + ' %',
-        totalAdj: adjDecayTotal.toFixed(1) + ' %',
+        totalOrig: origDecayTotal.toFixed(1) + ' %',
+        totalAdj: adjDecayTotal.toFixed(1) + ' %',
         perPeriod: FS_REACH_DECAY_PER_PERIOD,
         isReach: true,
       },
       {
         label: 'Cumulative Reach @1+',
-        totalOrig: origReachTotal.toFixed(1) + ' %',
-        totalAdj: adjReachTotal.toFixed(1) + ' %',
+        totalOrig: origReachTotal.toFixed(1) + ' %',
+        totalAdj: adjReachTotal.toFixed(1) + ' %',
         perPeriod: FS_CUM_REACH_PER_PERIOD,
         isReach: true,
       },
       {
         label: 'Revenue',
-        totalOrig: 'USD 15 000 000',
+        totalOrig: 'USD 15 000 000',
         totalAdj: null,
         perPeriod: FS_REVENUE_PER_PERIOD,
         isRevenue: true,
@@ -1582,7 +1790,7 @@
         if (row.isRevenue) {
           bodyHTML += `<td>${fmtRevCell(v)}</td>`;
         } else {
-          bodyHTML += `<td>${v.toFixed(1)} %</td>`;
+          bodyHTML += `<td>${v.toFixed(1)} %</td>`;
         }
       });
       bodyHTML += '</tr>';
@@ -1750,7 +1958,7 @@
   }
 
   /* ======================================================
-     TOGGLE
+     ATTENTION TOGGLE
   ====================================================== */
   const attToggle = document.getElementById('attToggle');
   const tableWrap = document.getElementById('tableWrap');
@@ -1779,6 +1987,28 @@
   attToggle.addEventListener('click', () => { attentionOn = !attentionOn; applyToggle(); });
   attToggle.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); attentionOn = !attentionOn; applyToggle(); }
+  });
+
+  /* ======================================================
+     FLIGHTING STRATEGY TOGGLE
+  ====================================================== */
+  const flightingToggleEl = document.getElementById('flightingToggle');
+
+  flightingToggleEl.addEventListener('click', function() {
+    flightingOn = !flightingOn;
+    if (flightingOn) {
+      flightingToggleEl.classList.add('on');
+      flightingToggleEl.setAttribute('aria-checked', 'true');
+    } else {
+      flightingToggleEl.classList.remove('on');
+      flightingToggleEl.setAttribute('aria-checked', 'false');
+    }
+    document.getElementById('viewSegControl').style.display = flightingOn ? 'flex' : 'none';
+    toggleFlightingColumns(flightingOn);
+  });
+
+  flightingToggleEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flightingToggleEl.click(); }
   });
 
   /* ======================================================
@@ -1827,10 +2057,16 @@
     if (!btn) return;
     syncChartSegs(btn.dataset.chart);
   });
+
   document.getElementById('viewSegControl').addEventListener('click', e => {
     const btn = e.target.closest('.seg-btn');
     if (!btn) return;
-    syncChartSegs(btn.dataset.view);
+    // Update flighting period values when mode changes
+    const mode = btn.dataset.view;
+    syncChartSegs(mode);
+    if (flightingOn) {
+      renderPeriodValues(mode);
+    }
   });
 
   /* ======================================================
