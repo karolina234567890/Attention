@@ -979,6 +979,78 @@
     @media (max-width: 1100px) {
       .content { padding: 16px 16px; }
     }
+
+    /* Column hidden via Manage Columns */
+    .col-hidden { display: none !important; }
+
+    /* Manage columns popover wrapper */
+    .manage-cols-wrap { position: relative; }
+
+    .mc-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      z-index: 500;
+      background: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+      width: 258px;
+      display: none;
+    }
+    .mc-popover.open { display: block; }
+
+    .mc-pop-header {
+      padding: 13px 16px 10px;
+      border-bottom: 1px solid #F3F4F6;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .mc-pop-title { font-size: 13px; font-weight: 600; color: #111827; }
+    .mc-show-all {
+      font-size: 12px; color: #4F6BED; cursor: pointer;
+      background: none; border: none; font-family: 'Inter', sans-serif; padding: 0;
+    }
+    .mc-show-all:hover { text-decoration: underline; }
+
+    .mc-pop-list { padding: 6px 0; max-height: 310px; overflow-y: auto; }
+    .mc-pop-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 16px; transition: background 100ms; cursor: default;
+    }
+    .mc-pop-item:hover { background: #F9FAFB; }
+    .mc-pop-label { font-size: 13px; color: #374151; }
+
+    .mc-toggle {
+      width: 32px; height: 17px; border-radius: 9px;
+      background: #D1D5DB; position: relative; cursor: pointer;
+      transition: background 200ms; border: none; flex-shrink: 0;
+    }
+    .mc-toggle.on { background: #4F6BED; }
+    .mc-toggle::after {
+      content: ''; width: 13px; height: 13px; border-radius: 50%;
+      background: #FFFFFF; position: absolute; top: 2px; left: 2px;
+      transition: left 200ms; box-shadow: 0 1px 2px rgba(0,0,0,0.18);
+    }
+    .mc-toggle.on::after { left: 17px; }
+
+    .mc-pop-footer {
+      padding: 10px 16px 13px; border-top: 1px solid #F3F4F6;
+      display: flex; justify-content: flex-end; gap: 8px;
+    }
+    .mc-btn-cancel {
+      padding: 6px 13px; border: 1px solid #E5E7EB; border-radius: 7px;
+      background: #FFFFFF; color: #374151; font-size: 12px; font-weight: 500;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+    }
+    .mc-btn-cancel:hover { background: #F9FAFB; }
+    .mc-btn-apply {
+      padding: 6px 14px; border: none; border-radius: 7px;
+      background: #4F6BED; color: #FFFFFF; font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+    }
+    .mc-btn-apply:hover { background: #3D56C7; }
   </style>
 </head>
 <body>
@@ -1189,10 +1261,23 @@
             <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M7 9l-3-3M7 9l3-3M1 11h12" stroke="#4F6BED" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Export
           </button>
-          <button class="btn-toolbar" id="manageColsBtn">
-            <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="4" cy="7" r="1.5" fill="#6B7280"/><circle cx="7" cy="7" r="1.5" fill="#6B7280"/><circle cx="10" cy="7" r="1.5" fill="#6B7280"/></svg>
-            Manage Columns (6)
-          </button>
+          <div class="manage-cols-wrap">
+            <button class="btn-toolbar" id="manageColsBtn">
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="4" cy="7" r="1.5" fill="#6B7280"/><circle cx="7" cy="7" r="1.5" fill="#6B7280"/><circle cx="10" cy="7" r="1.5" fill="#6B7280"/></svg>
+              Manage Columns
+            </button>
+            <div class="mc-popover" id="mcPopover">
+              <div class="mc-pop-header">
+                <span class="mc-pop-title">Manage Columns</span>
+                <button class="mc-show-all" id="mcShowAll">Show all</button>
+              </div>
+              <div class="mc-pop-list" id="mcPopList"></div>
+              <div class="mc-pop-footer">
+                <button class="mc-btn-cancel" id="mcCancel">Cancel</button>
+                <button class="mc-btn-apply" id="mcApply">Apply</button>
+              </div>
+            </div>
+          </div>
           <!-- CHANGE 4: Chart segmented control — hidden by default -->
           <div class="seg-ctrl" id="chartSegCtrl" style="display:none">
             <button class="seg-btn active" data-mode="budget">Budget</button>
@@ -1212,34 +1297,34 @@
                 <th style="min-width:120px; text-align:left;">
                   <div class="th-inner">Channel <span class="th-sort">↑↓</span></div>
                 </th>
-                <th class="col-threshold col-threshold-head" style="min-width:110px;">
+                <th data-col="threshold" class="col-threshold col-threshold-head" style="min-width:110px;">
                   <div class="th-inner">Attention<br>Threshold</div>
                 </th>
-                <th style="min-width:110px;">
+                <th data-col="cost" style="min-width:110px;">
                   <div class="th-inner" style="justify-content:flex-end;">Cost <span class="th-sort">↑↓</span></div>
                 </th>
-                <th style="min-width:120px;">
+                <th data-col="weight" style="min-width:120px;">
                   <div class="th-inner" style="justify-content:flex-end;">Weight <span class="th-sort">↑↓</span></div>
                 </th>
-                <th style="min-width:90px;">
+                <th data-col="budget-share" style="min-width:90px;">
                   <div class="th-inner" style="justify-content:flex-end;">Budget<br>Share % <span class="th-sort">↑↓</span></div>
                 </th>
-                <th style="min-width:130px;">
+                <th data-col="budget" style="min-width:130px;">
                   <div class="th-inner" style="justify-content:flex-end;">Budget <span class="th-sort">↑↓</span></div>
                 </th>
-                <th class="col-cum-reach" style="min-width:100px;">
+                <th data-col="cum-reach" class="col-cum-reach" style="min-width:100px;">
                   <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
                     <span style="display:flex;align-items:center;gap:3px;">Cum. Reach @1+ <span class="th-sort">↑↓</span></span>
                     <span class="th-adj-pill">ADJUSTED</span>
                   </div>
                 </th>
-                <th class="col-decay" style="min-width:110px;">
+                <th data-col="decay" class="col-decay" style="min-width:110px;">
                   <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
                     <span style="display:flex;align-items:center;gap:3px;">Reach w. Decay @1+ <span class="th-sort">↑↓</span></span>
                     <span class="th-adj-pill">ADJUSTED</span>
                   </div>
                 </th>
-                <th style="min-width:120px;">
+                <th data-col="revenue" style="min-width:120px;">
                   <div class="th-inner" style="justify-content:flex-end;">Revenue <span class="th-sort">↑↓</span></div>
                 </th>
               </tr>
@@ -1470,50 +1555,50 @@
 
       /* Threshold */
       if (row.noAtt) {
-        html += `<td class="col-threshold"><span class="badge-no-att">NO ATTENTION</span></td>`;
+        html += `<td data-col="threshold" class="col-threshold"><span class="badge-no-att">NO ATTENTION</span></td>`;
       } else {
         const opts = THRESHOLD_OPTIONS.map(o =>
           `<option value="${o}"${thresholds[row.channel]===o?' selected':''}>${o}</option>`
         ).join('');
-        html += `<td class="col-threshold"><select class="threshold-select" data-channel="${row.channel}">${opts}</select></td>`;
+        html += `<td data-col="threshold" class="col-threshold"><select class="threshold-select" data-channel="${row.channel}">${opts}</select></td>`;
       }
 
       /* Cost */
       if (attentionOn) {
-        html += `<td><span class="cell-muted">${fmtCost(row.costOrig)}</span>${metricBadge(row.costUnit)}</td>`;
+        html += `<td data-col="cost"><span class="cell-muted">${fmtCost(row.costOrig)}</span>${metricBadge(row.costUnit)}</td>`;
       } else {
-        html += `<td>${fmtCost(row.costOrig)}${metricBadge(row.costUnit)}</td>`;
+        html += `<td data-col="cost">${fmtCost(row.costOrig)}${metricBadge(row.costUnit)}</td>`;
       }
 
       /* Weight */
       if (attentionOn) {
-        html += `<td><span class="cell-muted">${fmtNum(row.weightOrig)}</span>${metricBadge(row.weightUnit)}</td>`;
+        html += `<td data-col="weight"><span class="cell-muted">${fmtNum(row.weightOrig)}</span>${metricBadge(row.weightUnit)}</td>`;
       } else {
-        html += `<td>${fmtNum(row.weightOrig)}${metricBadge(row.weightUnit)}</td>`;
+        html += `<td data-col="weight">${fmtNum(row.weightOrig)}${metricBadge(row.weightUnit)}</td>`;
       }
 
       /* Budget Share */
-      html += `<td>${row.budgetShare.toFixed(1)} %</td>`;
+      html += `<td data-col="budget-share">${row.budgetShare.toFixed(1)} %</td>`;
 
       /* Budget */
-      html += `<td><span class="budget-cell">${fmtBudget(row.budget)}</span></td>`;
+      html += `<td data-col="budget"><span class="budget-cell">${fmtBudget(row.budget)}</span></td>`;
 
       /* Cum. Reach @1+ */
       if (attentionOn && !row.noAtt) {
-        html += `<td><span class="cell-adj-val">${fmtPct(adj.cumReachAdj)}</span></td>`;
+        html += `<td data-col="cum-reach"><span class="cell-adj-val">${fmtPct(adj.cumReachAdj)}</span></td>`;
       } else {
-        html += `<td>${fmtPct(row.cumReachOrig)}</td>`;
+        html += `<td data-col="cum-reach">${fmtPct(row.cumReachOrig)}</td>`;
       }
 
       /* Reach w. Decay @1+ */
       if (attentionOn && !row.noAtt) {
-        html += `<td><span class="cell-adj-val">${fmtPct(adj.decayAdj)}</span></td>`;
+        html += `<td data-col="decay"><span class="cell-adj-val">${fmtPct(adj.decayAdj)}</span></td>`;
       } else {
-        html += `<td>${fmtPct(row.decayOrig)}</td>`;
+        html += `<td data-col="decay">${fmtPct(row.decayOrig)}</td>`;
       }
 
       /* Revenue */
-      html += `<td>${fmtRevenue(row.revenue)}</td>`;
+      html += `<td data-col="revenue">${fmtRevenue(row.revenue)}</td>`;
 
       tr.innerHTML = html;
       tableBody.appendChild(tr);
@@ -1549,40 +1634,40 @@
 
     let html = `<tr class="total-row">`;
     html += `<td class="cell-channel-name">Total</td>`;
-    html += `<td class="col-threshold"></td>`;
+    html += `<td data-col="threshold" class="col-threshold"></td>`;
 
     /* Cost */
     if (attentionOn) {
-      html += `<td><span class="cell-muted">${fmtCost(costOrigAvg)}</span></td>`;
+      html += `<td data-col="cost"><span class="cell-muted">${fmtCost(costOrigAvg)}</span></td>`;
     } else {
-      html += `<td>${fmtCost(costOrigAvg)}</td>`;
+      html += `<td data-col="cost">${fmtCost(costOrigAvg)}</td>`;
     }
 
     /* Weight */
     if (attentionOn) {
-      html += `<td><span class="cell-muted">${fmtNum(weightTotal)}</span></td>`;
+      html += `<td data-col="weight"><span class="cell-muted">${fmtNum(weightTotal)}</span></td>`;
     } else {
-      html += `<td>${fmtNum(weightTotal)}</td>`;
+      html += `<td data-col="weight">${fmtNum(weightTotal)}</td>`;
     }
 
-    html += `<td>—</td>`;
-    html += `<td><span class="budget-cell">${fmtBudget(totalBudget)}</span></td>`;
+    html += `<td data-col="budget-share">—</td>`;
+    html += `<td data-col="budget"><span class="budget-cell">${fmtBudget(totalBudget)}</span></td>`;
 
     /* Cum Reach */
     if (attentionOn) {
-      html += `<td><span class="cell-adj-val">${fmtPct(cumAdjTotal)}</span></td>`;
+      html += `<td data-col="cum-reach"><span class="cell-adj-val">${fmtPct(cumAdjTotal)}</span></td>`;
     } else {
-      html += `<td>${fmtPct(cumOrigTotal)}</td>`;
+      html += `<td data-col="cum-reach">${fmtPct(cumOrigTotal)}</td>`;
     }
 
     /* Decay */
     if (attentionOn) {
-      html += `<td><span class="cell-adj-val">${fmtPct(decAdjTotal)}</span></td>`;
+      html += `<td data-col="decay"><span class="cell-adj-val">${fmtPct(decAdjTotal)}</span></td>`;
     } else {
-      html += `<td>${fmtPct(decOrigTotal)}</td>`;
+      html += `<td data-col="decay">${fmtPct(decOrigTotal)}</td>`;
     }
 
-    html += `<td>${fmtRevenue(totalRevenue)}</td>`;
+    html += `<td data-col="revenue">${fmtRevenue(totalRevenue)}</td>`;
     html += `</tr>`;
     tableFoot.innerHTML = html;
   }
@@ -2041,6 +2126,98 @@
       /* Re-render period column values when mode changes */
       updatePeriodColumnValues();
     });
+  });
+
+  /* ═══════════════════════════════════════════════
+     MANAGE COLUMNS
+  ═══════════════════════════════════════════════ */
+  const COL_DEFS = [
+    { col: 'threshold',    label: 'Attention Threshold' },
+    { col: 'cost',         label: 'Cost' },
+    { col: 'weight',       label: 'Weight' },
+    { col: 'budget-share', label: 'Budget Share %' },
+    { col: 'budget',       label: 'Budget' },
+    { col: 'cum-reach',    label: 'Cum. Reach @1+' },
+    { col: 'decay',        label: 'Reach w. Decay @1+' },
+    { col: 'revenue',      label: 'Estimated Revenue' },
+  ];
+
+  const colVisibility = {};
+  COL_DEFS.forEach(d => { colVisibility[d.col] = true; });
+  let tempVisibility = {};
+
+  function applyColumnVisibility() {
+    COL_DEFS.forEach(def => {
+      document.querySelectorAll(`[data-col="${def.col}"]`).forEach(el => {
+        el.classList.toggle('col-hidden', !colVisibility[def.col]);
+      });
+    });
+    updateManageColsBtn();
+  }
+
+  function updateManageColsBtn() {
+    const btnEl = document.getElementById('manageColsBtn');
+    if (!btnEl) return;
+    const hiddenCount = COL_DEFS.filter(d => !colVisibility[d.col]).length;
+    const svgIcon = '<svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="4" cy="7" r="1.5" fill="#6B7280"/><circle cx="7" cy="7" r="1.5" fill="#6B7280"/><circle cx="10" cy="7" r="1.5" fill="#6B7280"/></svg>';
+    btnEl.innerHTML = svgIcon + (hiddenCount > 0 ? ` Manage Columns (${hiddenCount} hidden)` : ' Manage Columns');
+  }
+
+  function renderMcList() {
+    const listEl = document.getElementById('mcPopList');
+    if (!listEl) return;
+    // Exclude threshold from popover when attention is off (already hidden by CSS)
+    const defs = COL_DEFS.filter(d => attentionOn || d.col !== 'threshold');
+    listEl.innerHTML = defs.map(d => {
+      const on = tempVisibility[d.col] !== false;
+      return `<div class="mc-pop-item">
+        <span class="mc-pop-label">${d.label}</span>
+        <button class="mc-toggle${on ? ' on' : ''}" data-col="${d.col}" aria-pressed="${on}"></button>
+      </div>`;
+    }).join('');
+    listEl.querySelectorAll('.mc-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const nowOn = !btn.classList.contains('on');
+        tempVisibility[btn.dataset.col] = nowOn;
+        btn.classList.toggle('on', nowOn);
+        btn.setAttribute('aria-pressed', nowOn);
+      });
+    });
+  }
+
+  const mcPopover   = document.getElementById('mcPopover');
+  const manageColsBtn = document.getElementById('manageColsBtn');
+
+  manageColsBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (mcPopover.classList.contains('open')) {
+      mcPopover.classList.remove('open');
+    } else {
+      COL_DEFS.forEach(d => { tempVisibility[d.col] = colVisibility[d.col]; });
+      renderMcList();
+      mcPopover.classList.add('open');
+    }
+  });
+
+  document.addEventListener('click', e => {
+    if (!mcPopover.contains(e.target) && e.target !== manageColsBtn) {
+      mcPopover.classList.remove('open');
+    }
+  });
+
+  document.getElementById('mcShowAll').addEventListener('click', () => {
+    COL_DEFS.forEach(d => { tempVisibility[d.col] = true; });
+    renderMcList();
+  });
+
+  document.getElementById('mcCancel').addEventListener('click', () => {
+    mcPopover.classList.remove('open');
+  });
+
+  document.getElementById('mcApply').addEventListener('click', () => {
+    COL_DEFS.forEach(d => { colVisibility[d.col] = tempVisibility[d.col] !== false; });
+    applyColumnVisibility();
+    mcPopover.classList.remove('open');
   });
 
   /* ═══════════════════════════════════════════════
