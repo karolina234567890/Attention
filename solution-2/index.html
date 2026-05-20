@@ -987,6 +987,78 @@
     svg text { font-family: 'Inter', sans-serif; }
 
     .hidden { display: none !important; }
+
+    /* Column hidden via Manage Columns */
+    .col-hidden { display: none !important; }
+
+    /* Manage columns popover wrapper */
+    .manage-cols-wrap { position: relative; }
+
+    .mc-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      z-index: 500;
+      background: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+      width: 258px;
+      display: none;
+    }
+    .mc-popover.open { display: block; }
+
+    .mc-pop-header {
+      padding: 13px 16px 10px;
+      border-bottom: 1px solid #F3F4F6;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .mc-pop-title { font-size: 13px; font-weight: 600; color: #111827; }
+    .mc-show-all {
+      font-size: 12px; color: #4F6BED; cursor: pointer;
+      background: none; border: none; font-family: 'Inter', sans-serif; padding: 0;
+    }
+    .mc-show-all:hover { text-decoration: underline; }
+
+    .mc-pop-list { padding: 6px 0; max-height: 310px; overflow-y: auto; }
+    .mc-pop-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 16px; transition: background 100ms; cursor: default;
+    }
+    .mc-pop-item:hover { background: #F9FAFB; }
+    .mc-pop-label { font-size: 13px; color: #374151; }
+
+    .mc-toggle {
+      width: 32px; height: 17px; border-radius: 9px;
+      background: #D1D5DB; position: relative; cursor: pointer;
+      transition: background 200ms; border: none; flex-shrink: 0;
+    }
+    .mc-toggle.on { background: #4F6BED; }
+    .mc-toggle::after {
+      content: ''; width: 13px; height: 13px; border-radius: 50%;
+      background: #FFFFFF; position: absolute; top: 2px; left: 2px;
+      transition: left 200ms; box-shadow: 0 1px 2px rgba(0,0,0,0.18);
+    }
+    .mc-toggle.on::after { left: 17px; }
+
+    .mc-pop-footer {
+      padding: 10px 16px 13px; border-top: 1px solid #F3F4F6;
+      display: flex; justify-content: flex-end; gap: 8px;
+    }
+    .mc-btn-cancel {
+      padding: 6px 13px; border: 1px solid #E5E7EB; border-radius: 7px;
+      background: #FFFFFF; color: #374151; font-size: 12px; font-weight: 500;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+    }
+    .mc-btn-cancel:hover { background: #F9FAFB; }
+    .mc-btn-apply {
+      padding: 6px 14px; border: none; border-radius: 7px;
+      background: #4F6BED; color: #FFFFFF; font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+    }
+    .mc-btn-apply:hover { background: #3D56C7; }
   </style>
 </head>
 <body>
@@ -1237,15 +1309,28 @@
           </div>
 
           <div class="toolbar-right-group">
-            <button class="btn-manage-cols">
-              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4">
-                <path d="M1 4h12M1 7h12M1 10h12" stroke-linecap="round"/>
-                <circle cx="4" cy="4" r="1.5" fill="white" stroke="currentColor" stroke-width="1.2"/>
-                <circle cx="9" cy="7" r="1.5" fill="white" stroke="currentColor" stroke-width="1.2"/>
-                <circle cx="5" cy="10" r="1.5" fill="white" stroke="currentColor" stroke-width="1.2"/>
-              </svg>
-              Manage Columns (6)
-            </button>
+            <div class="manage-cols-wrap">
+              <button class="btn-manage-cols" id="btnManageCols">
+                <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4">
+                  <path d="M1 4h12M1 7h12M1 10h12" stroke-linecap="round"/>
+                  <circle cx="4" cy="4" r="1.5" fill="white" stroke="currentColor" stroke-width="1.2"/>
+                  <circle cx="9" cy="7" r="1.5" fill="white" stroke="currentColor" stroke-width="1.2"/>
+                  <circle cx="5" cy="10" r="1.5" fill="white" stroke="currentColor" stroke-width="1.2"/>
+                </svg>
+                Manage Columns
+              </button>
+              <div class="mc-popover" id="mcPopover">
+                <div class="mc-pop-header">
+                  <span class="mc-pop-title">Manage Columns</span>
+                  <button class="mc-show-all" id="mcShowAll">Show all</button>
+                </div>
+                <div class="mc-pop-list" id="mcPopList"></div>
+                <div class="mc-pop-footer">
+                  <button class="mc-btn-cancel" id="mcCancel">Cancel</button>
+                  <button class="mc-btn-apply" id="mcApply">Apply</button>
+                </div>
+              </div>
+            </div>
             <div class="segmented-control" id="viewSegControl" style="display:none">
               <button class="seg-btn active" data-view="budget">Budget</button>
               <button class="seg-btn" data-view="weight">Weight</button>
@@ -1261,18 +1346,18 @@
               <thead>
                 <tr>
                   <th class="th-channel" style="min-width:150px">Channel</th>
-                  <th class="adj-col col-threshold" style="min-width:110px">Attention<br>Threshold</th>
-                  <th id="thCost" style="min-width:110px">Cost</th>
-                  <th class="adj-col th-adj" style="min-width:100px">Cost <span class="adj-sep">+</span> <span class="adj-pill">ADJ</span></th>
-                  <th id="thWeight" style="min-width:110px">Weight</th>
-                  <th class="adj-col th-adj" style="min-width:100px">Weight <span class="adj-sep">+</span> <span class="adj-pill">ADJ</span></th>
-                  <th style="min-width:90px">Budget<br>Share %</th>
-                  <th style="min-width:125px">Budget</th>
-                  <th id="thReach" style="min-width:100px">Cum. Reach<br>@1+</th>
-                  <th class="adj-col th-adj" style="min-width:100px">Cum. Reach<br>@1+ <span class="adj-sep">+</span> <span class="adj-pill">ADJ</span></th>
-                  <th id="thDecay" style="min-width:110px">Reach w.<br>Decay @1+</th>
-                  <th class="adj-col th-adj" style="min-width:100px">Reach w.<br>Decay <span class="adj-sep">+</span> <span class="adj-pill">ADJ</span></th>
-                  <th style="min-width:120px">Revenue</th>
+                  <th data-col="threshold" class="adj-col col-threshold" style="min-width:110px">Attention<br>Threshold</th>
+                  <th data-col="cost" id="thCost" style="min-width:110px">Cost</th>
+                  <th data-col="cost-adj" class="adj-col th-adj" style="min-width:100px">Cost <span class="adj-sep">+</span> <span class="adj-pill">ADJ</span></th>
+                  <th data-col="weight" id="thWeight" style="min-width:110px">Weight</th>
+                  <th data-col="weight-adj" class="adj-col th-adj" style="min-width:100px">Weight <span class="adj-sep">+</span> <span class="adj-pill">ADJ</span></th>
+                  <th data-col="budget-share" style="min-width:90px">Budget<br>Share %</th>
+                  <th data-col="budget" style="min-width:125px">Budget</th>
+                  <th data-col="cum-reach" id="thReach" style="min-width:100px">Cum. Reach<br>@1+</th>
+                  <th data-col="cum-reach-adj" class="adj-col th-adj" style="min-width:100px">Cum. Reach<br>@1+ <span class="adj-sep">+</span> <span class="adj-pill">ADJ</span></th>
+                  <th data-col="decay" id="thDecay" style="min-width:110px">Reach w.<br>Decay @1+</th>
+                  <th data-col="decay-adj" class="adj-col th-adj" style="min-width:100px">Reach w.<br>Decay <span class="adj-sep">+</span> <span class="adj-pill">ADJ</span></th>
+                  <th data-col="revenue" style="min-width:120px">Revenue</th>
                 </tr>
               </thead>
               <tbody id="tableFoot" class="totals-body"></tbody>
@@ -1611,56 +1696,56 @@
 
     // Attention Threshold (adj-col col-threshold)
     if (isNoAtt) {
-      html += `<td class="adj-col col-threshold"><span class="no-att-badge">NO ATTENTION</span></td>`;
+      html += `<td data-col="threshold" class="adj-col col-threshold"><span class="no-att-badge">NO ATTENTION</span></td>`;
     } else {
       const opts = THRESHOLD_OPTIONS.map(o => `<option value="${o}"${o===rowThresholds[idx]?' selected':''}>${o}</option>`).join('');
-      html += `<td class="adj-col col-threshold"><select class="threshold-select" data-row="${idx}">${opts}</select></td>`;
+      html += `<td data-col="threshold" class="adj-col col-threshold"><select class="threshold-select" data-row="${idx}">${opts}</select></td>`;
     }
 
     // Cost (original)
-    html += `<td class="orig-cost${de}">${fmtCost(ch.costOrig)}<span class="metric-badge">${ch.costUnit}</span></td>`;
+    html += `<td data-col="cost" class="orig-cost${de}">${fmtCost(ch.costOrig)}<span class="metric-badge">${ch.costUnit}</span></td>`;
     // Cost ADJ.
     if (isNoAtt) {
-      html += `<td class="adj-col td-adj no-att-dash">—</td>`;
+      html += `<td data-col="cost-adj" class="adj-col td-adj no-att-dash">—</td>`;
     } else {
-      html += `<td class="adj-col td-adj">${fmtCost(adj.costAdj)}<span class="metric-badge">${ch.costUnit}</span></td>`;
+      html += `<td data-col="cost-adj" class="adj-col td-adj">${fmtCost(adj.costAdj)}<span class="metric-badge">${ch.costUnit}</span></td>`;
     }
 
     // Weight (original)
-    html += `<td class="orig-weight${de}">${fmtComma(ch.weightOrig)}<span class="metric-badge">${ch.weightUnit}</span></td>`;
+    html += `<td data-col="weight" class="orig-weight${de}">${fmtComma(ch.weightOrig)}<span class="metric-badge">${ch.weightUnit}</span></td>`;
     // Weight ADJ.
     if (isNoAtt) {
-      html += `<td class="adj-col td-adj no-att-dash">—</td>`;
+      html += `<td data-col="weight-adj" class="adj-col td-adj no-att-dash">—</td>`;
     } else {
-      html += `<td class="adj-col td-adj">${fmtComma(adj.weightAdj)}<span class="metric-badge">${ch.weightUnit}</span></td>`;
+      html += `<td data-col="weight-adj" class="adj-col td-adj">${fmtComma(adj.weightAdj)}<span class="metric-badge">${ch.weightUnit}</span></td>`;
     }
 
     // Budget Share
-    html += `<td>${fmtPct(ch.budgetShare)}</td>`;
+    html += `<td data-col="budget-share">${fmtPct(ch.budgetShare)}</td>`;
 
     // Budget
-    html += `<td class="td-budget-cell">${fmtUSD(ch.budget)}</td>`;
+    html += `<td data-col="budget" class="td-budget-cell">${fmtUSD(ch.budget)}</td>`;
 
     // Cum. Reach
-    html += `<td class="orig-reach${de}">${fmtPct(ch.cumReachOrig)}</td>`;
+    html += `<td data-col="cum-reach" class="orig-reach${de}">${fmtPct(ch.cumReachOrig)}</td>`;
     // Cum. Reach ADJ.
     if (isNoAtt) {
-      html += `<td class="adj-col td-adj no-att-dash">—</td>`;
+      html += `<td data-col="cum-reach-adj" class="adj-col td-adj no-att-dash">—</td>`;
     } else {
-      html += `<td class="adj-col td-adj">${fmtPct(adj.cumReachAdj)}</td>`;
+      html += `<td data-col="cum-reach-adj" class="adj-col td-adj">${fmtPct(adj.cumReachAdj)}</td>`;
     }
 
     // Reach w. Decay
-    html += `<td class="orig-decay${de}">${fmtPct(ch.decayOrig)}</td>`;
+    html += `<td data-col="decay" class="orig-decay${de}">${fmtPct(ch.decayOrig)}</td>`;
     // Decay ADJ.
     if (isNoAtt) {
-      html += `<td class="adj-col td-adj no-att-dash">—</td>`;
+      html += `<td data-col="decay-adj" class="adj-col td-adj no-att-dash">—</td>`;
     } else {
-      html += `<td class="adj-col td-adj">${fmtPct(adj.decayAdj)}</td>`;
+      html += `<td data-col="decay-adj" class="adj-col td-adj">${fmtPct(adj.decayAdj)}</td>`;
     }
 
     // Revenue
-    html += `<td>${fmtUSD(ch.revenue)}</td>`;
+    html += `<td data-col="revenue">${fmtUSD(ch.revenue)}</td>`;
 
     tr.innerHTML = html;
     return tr;
@@ -1709,18 +1794,18 @@
 
     tr.innerHTML = `
       <td class="td-channel" style="font-weight:700">Totals</td>
-      <td class="adj-col col-threshold"></td>
-      <td class="${de}"></td>
-      <td class="adj-col td-adj"></td>
-      <td class="${de}"></td>
-      <td class="adj-col td-adj"></td>
-      <td></td>
-      <td class="td-budget-cell">${fmtUSD(totalBudget)}</td>
-      <td class="${de}">${fmtPct(wReachOrig)}</td>
-      <td class="adj-col td-adj">${fmtPct(wReachAdj)}</td>
-      <td class="${de}">${fmtPct(wDecayOrig)}</td>
-      <td class="adj-col td-adj">${fmtPct(wDecayAdj)}</td>
-      <td>${fmtUSD(totalRevenue)}</td>
+      <td data-col="threshold" class="adj-col col-threshold"></td>
+      <td data-col="cost" class="${de}"></td>
+      <td data-col="cost-adj" class="adj-col td-adj"></td>
+      <td data-col="weight" class="${de}"></td>
+      <td data-col="weight-adj" class="adj-col td-adj"></td>
+      <td data-col="budget-share"></td>
+      <td data-col="budget" class="td-budget-cell">${fmtUSD(totalBudget)}</td>
+      <td data-col="cum-reach" class="${de}">${fmtPct(wReachOrig)}</td>
+      <td data-col="cum-reach-adj" class="adj-col td-adj">${fmtPct(wReachAdj)}</td>
+      <td data-col="decay" class="${de}">${fmtPct(wDecayOrig)}</td>
+      <td data-col="decay-adj" class="adj-col td-adj">${fmtPct(wDecayAdj)}</td>
+      <td data-col="revenue">${fmtUSD(totalRevenue)}</td>
     `;
     tfootEl.appendChild(tr);
 
@@ -1993,6 +2078,120 @@
   }
 
   /* ======================================================
+     MANAGE COLUMNS
+  ====================================================== */
+  const COL_DEFS = [
+    { col: 'threshold',    label: 'Attention Threshold' },
+    { col: 'cost',         label: 'Cost' },
+    { col: 'cost-adj',     label: 'Cost ADJ.' },
+    { col: 'weight',       label: 'Weight' },
+    { col: 'weight-adj',   label: 'Weight ADJ.' },
+    { col: 'budget-share', label: 'Budget Share %' },
+    { col: 'budget',       label: 'Budget' },
+    { col: 'cum-reach',    label: 'Cum. Reach @1+' },
+    { col: 'cum-reach-adj',label: 'Cum. Reach ADJ.' },
+    { col: 'decay',        label: 'Reach w. Decay @1+' },
+    { col: 'decay-adj',    label: 'Reach w. Decay ADJ.' },
+    { col: 'revenue',      label: 'Estimated Revenue' },
+  ];
+  const AUTO_HIDE_COLS = new Set(['threshold','cost','cost-adj','weight','weight-adj']);
+
+  // true = visible, false = hidden
+  const colVisibility = {};
+  COL_DEFS.forEach(d => { colVisibility[d.col] = true; });
+
+  // working copy while popover is open
+  let tempVisibility = {};
+
+  function applyColumnVisibility() {
+    COL_DEFS.forEach(def => {
+      document.querySelectorAll(`[data-col="${def.col}"]`).forEach(el => {
+        el.classList.toggle('col-hidden', !colVisibility[def.col]);
+      });
+    });
+    updateBtnManageCols();
+  }
+
+  function updateBtnManageCols() {
+    const btnEl = document.getElementById('btnManageCols');
+    if (!btnEl) return;
+    const hiddenCount = COL_DEFS.filter(d => !colVisibility[d.col]).length;
+    btnEl.innerHTML = `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4">
+      <path d="M1 4h12M1 7h12M1 10h12" stroke-linecap="round"/>
+      <circle cx="4" cy="4" r="1.5" fill="white" stroke="currentColor" stroke-width="1.2"/>
+      <circle cx="9" cy="7" r="1.5" fill="white" stroke="currentColor" stroke-width="1.2"/>
+      <circle cx="5" cy="10" r="1.5" fill="white" stroke="currentColor" stroke-width="1.2"/>
+    </svg>${hiddenCount > 0 ? `Manage Columns (${hiddenCount} hidden)` : 'Manage Columns'}`;
+  }
+
+  function updateAutoHide() {
+    const bothOn = attentionOn && flightingOn;
+    AUTO_HIDE_COLS.forEach(col => {
+      colVisibility[col] = !bothOn;
+    });
+    applyColumnVisibility();
+  }
+
+  function renderMcList() {
+    const listEl = document.getElementById('mcPopList');
+    if (!listEl) return;
+    // Only include adj-specific columns when attention is ON
+    const adjOnly = new Set(['threshold','cost-adj','weight-adj','cum-reach-adj','decay-adj']);
+    const defs = COL_DEFS.filter(d => attentionOn || !adjOnly.has(d.col));
+    listEl.innerHTML = defs.map(d => {
+      const on = tempVisibility[d.col] !== false;
+      return `<div class="mc-pop-item">
+        <span class="mc-pop-label">${d.label}</span>
+        <button class="mc-toggle${on ? ' on' : ''}" data-col="${d.col}" aria-pressed="${on}"></button>
+      </div>`;
+    }).join('');
+    listEl.querySelectorAll('.mc-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const col = btn.dataset.col;
+        const nowOn = !btn.classList.contains('on');
+        tempVisibility[col] = nowOn;
+        btn.classList.toggle('on', nowOn);
+        btn.setAttribute('aria-pressed', nowOn);
+      });
+    });
+  }
+
+  const mcPopover = document.getElementById('mcPopover');
+  const btnManageColsEl = document.getElementById('btnManageCols');
+
+  btnManageColsEl.addEventListener('click', e => {
+    e.stopPropagation();
+    if (mcPopover.classList.contains('open')) {
+      mcPopover.classList.remove('open');
+    } else {
+      COL_DEFS.forEach(d => { tempVisibility[d.col] = colVisibility[d.col]; });
+      renderMcList();
+      mcPopover.classList.add('open');
+    }
+  });
+
+  document.addEventListener('click', e => {
+    if (!mcPopover.contains(e.target) && e.target !== btnManageColsEl) {
+      mcPopover.classList.remove('open');
+    }
+  });
+
+  document.getElementById('mcShowAll').addEventListener('click', () => {
+    COL_DEFS.forEach(d => { tempVisibility[d.col] = true; });
+    renderMcList();
+  });
+
+  document.getElementById('mcCancel').addEventListener('click', () => {
+    mcPopover.classList.remove('open');
+  });
+
+  document.getElementById('mcApply').addEventListener('click', () => {
+    COL_DEFS.forEach(d => { colVisibility[d.col] = tempVisibility[d.col] !== false; });
+    applyColumnVisibility();
+    mcPopover.classList.remove('open');
+  });
+
+  /* ======================================================
      ATTENTION TOGGLE
   ====================================================== */
   const attToggle = document.getElementById('attToggle');
@@ -2005,23 +2204,27 @@
       attToggle.classList.add('on');
       attToggle.setAttribute('aria-checked', 'true');
       tableWrap.classList.add('attention-on');
-      sidebar.classList.add('collapsed');
       scenBadge.classList.add('visible');
     } else {
       attToggle.classList.remove('on');
       attToggle.setAttribute('aria-checked', 'false');
       tableWrap.classList.remove('attention-on');
-      sidebar.classList.remove('collapsed');
       scenBadge.classList.remove('visible');
+    }
+    // Collapse sidebar only when both toggles are on
+    if (attentionOn && flightingOn) {
+      sidebar.classList.add('collapsed');
+    } else {
+      sidebar.classList.remove('collapsed');
     }
     updateOrigEmphasis();
     buildTotalsRow();
     renderFlightingSummary();
   }
 
-  attToggle.addEventListener('click', () => { attentionOn = !attentionOn; applyToggle(); });
+  attToggle.addEventListener('click', () => { attentionOn = !attentionOn; applyToggle(); updateAutoHide(); });
   attToggle.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); attentionOn = !attentionOn; applyToggle(); }
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); attentionOn = !attentionOn; applyToggle(); updateAutoHide(); }
   });
 
   /* ======================================================
@@ -2039,7 +2242,14 @@
       flightingToggleEl.setAttribute('aria-checked', 'false');
     }
     document.getElementById('viewSegControl').style.display = flightingOn ? 'flex' : 'none';
+    // Collapse sidebar when both toggles are on
+    if (attentionOn && flightingOn) {
+      sidebar.classList.add('collapsed');
+    } else {
+      sidebar.classList.remove('collapsed');
+    }
     toggleFlightingColumns(flightingOn);
+    updateAutoHide();
   });
 
   flightingToggleEl.addEventListener('keydown', e => {
