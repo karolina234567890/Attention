@@ -830,8 +830,8 @@
       background: #FFFFFF;
       box-shadow: 2px 0 6px rgba(0,0,0,0.06);
     }
-    /* tfoot threshold cell when attention on */
-    .attention-on tfoot td.col-threshold {
+    /* .totals-body threshold cell when attention on */
+    .attention-on .totals-body td.col-threshold {
       position: sticky;
       left: 150px;
       z-index: 2;
@@ -850,8 +850,8 @@
       z-index: 1;
     }
 
-    /* tfoot */
-    tfoot td {
+    /* .totals-body */
+    .totals-body td {
       background: #F9FAFB;
       font-weight: 600;
       color: #111827;
@@ -859,10 +859,10 @@
       padding: 10px 14px;
       font-size: 13px;
     }
-    tfoot td.td-channel { background: #F9FAFB; }
-    tfoot td.td-adj { color: #4F6BED; background: #EFF1FD; }
-    tfoot td.de-emph { color: #9CA3AF; font-weight: 400; }
-    tfoot td.td-budget-cell { background: #ECECEE; }
+    .totals-body td.td-channel { background: #F9FAFB; }
+    .totals-body td.td-adj { color: #4F6BED; background: #EFF1FD; }
+    .totals-body td.de-emph { color: #9CA3AF; font-weight: 400; }
+    .totals-body td.td-budget-cell { background: #ECECEE; }
 
     /* Calculate KPIs button */
     .btn-calc-kpis {
@@ -897,7 +897,7 @@
       text-align: right;
       padding: 0 10px;
     }
-    tfoot td.period-col {
+    .totals-body td.period-col {
       font-size: 12px;
       color: #374151;
       text-align: right;
@@ -1275,8 +1275,8 @@
                   <th style="min-width:120px">Revenue</th>
                 </tr>
               </thead>
+              <tbody id="tableFoot" class="totals-body"></tbody>
               <tbody id="tableBody"></tbody>
-              <tfoot id="tableFoot"></tfoot>
             </table>
           </div>
           <button class="btn-calc-kpis">Calculate KPIs</button>
@@ -1463,7 +1463,7 @@
     const table = document.getElementById('mainTable');
     const thead = table.querySelector('thead tr');
     const tbody = document.getElementById('tableBody');
-    const tfoot = document.getElementById('tableFoot');
+    const tfootEl = document.getElementById('tableFoot');
 
     if (!on) {
       // Remove all period-col elements
@@ -1493,9 +1493,9 @@
       });
     });
 
-    // Add period tds to tfoot (totals)
-    if (tfoot.rows.length > 0) {
-      const footTr = tfoot.rows[0];
+    // Add period tds to .totals-body (totals)
+    if (tfootEl.rows.length > 0) {
+      const footTr = tfootEl.rows[0];
       // Sum each period across all channels
       PERIODS.forEach((p, pi) => {
         const total = CHANNELS.reduce((sum, ch) => {
@@ -1514,7 +1514,7 @@
   function renderPeriodValues(mode) {
     flightingMode = mode;
     const tbody = document.getElementById('tableBody');
-    const tfoot = document.getElementById('tableFoot');
+    const tfootEl = document.getElementById('tableFoot');
 
     Array.from(tbody.rows).forEach(tr => {
       const channelName = tr.dataset.channel || '';
@@ -1525,9 +1525,9 @@
       });
     });
 
-    // Update tfoot period totals
-    if (tfoot.rows.length > 0) {
-      const footTr = tfoot.rows[0];
+    // Update .totals-body period totals
+    if (tfootEl.rows.length > 0) {
+      const footTr = tfootEl.rows[0];
       const cells = footTr.querySelectorAll('td.period-col');
       cells.forEach((td, pi) => {
         const total = CHANNELS.reduce((sum, ch) => {
@@ -1648,10 +1648,10 @@
   }
 
   function buildTotalsRow() {
-    const tfoot = document.getElementById('tableFoot');
+    const tfootEl = document.getElementById('tableFoot');
     // Save any existing period cells count before clearing
     const hadPeriodCols = flightingOn;
-    tfoot.innerHTML = '';
+    tfootEl.innerHTML = '';
     const tr = document.createElement('tr');
 
     const totalBudget  = CHANNELS.reduce((s,c) => s + c.budget, 0);
@@ -1687,7 +1687,7 @@
       <td class="adj-col td-adj">${fmtPct(wDecayAdj)}</td>
       <td>${fmtUSD(totalRevenue)}</td>
     `;
-    tfoot.appendChild(tr);
+    tfootEl.appendChild(tr);
 
     // Re-add period cells if flighting is on
     if (hadPeriodCols) {
