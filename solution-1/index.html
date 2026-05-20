@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Solution 1 — Replace Values + Export | Attention Adjustments</title>
+  <title>Solution 2 — Replace Values + Export | Attention Adjustments</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -1734,15 +1734,51 @@
     removePeriodColumns();
     if (on) {
       injectPeriodColumns();
+      requestAnimationFrame(applyStickyToNonPeriodColumns);
+    } else {
+      clearStickyFromNonPeriodColumns();
     }
   }
 
   function updatePeriodColumnValues() {
-    /* Re-render period cells in place without full rebuild */
     removePeriodColumns();
     if (flightingOn) {
       injectPeriodColumns();
+      requestAnimationFrame(applyStickyToNonPeriodColumns);
     }
+  }
+
+  function applyStickyToNonPeriodColumns() {
+    const table = document.getElementById('mainTable');
+    table.querySelectorAll('tr').forEach(row => {
+      const cells = Array.from(row.children).filter(c => !c.classList.contains('period-col'));
+      let left = 0;
+      cells.forEach(cell => {
+        cell.style.position = 'sticky';
+        cell.style.left = left + 'px';
+        cell.style.zIndex = cell.tagName === 'TH' ? '4' : '2';
+        if (!cell.style.background || cell.style.background === 'transparent') {
+          cell.style.background = cell.tagName === 'TH' ? '#F9FAFB' : '#fff';
+        }
+        left += cell.offsetWidth || parseInt(cell.style.minWidth) || 110;
+      });
+    });
+    /* Shadow on last fixed column to show boundary */
+    table.querySelectorAll('tr').forEach(row => {
+      const nonPeriod = Array.from(row.children).filter(c => !c.classList.contains('period-col'));
+      const last = nonPeriod[nonPeriod.length - 1];
+      if (last) last.style.boxShadow = '2px 0 6px rgba(0,0,0,0.08)';
+    });
+  }
+
+  function clearStickyFromNonPeriodColumns() {
+    const table = document.getElementById('mainTable');
+    table.querySelectorAll('th:not(.period-col), td:not(.period-col)').forEach(cell => {
+      cell.style.position = '';
+      cell.style.left = '';
+      cell.style.zIndex = '';
+      cell.style.boxShadow = '';
+    });
   }
 
   /* ═══════════════════════════════════════════════

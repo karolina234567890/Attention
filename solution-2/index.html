@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=1440" />
-  <title>Solution 2 — Side-by-Side Columns | Attention Adjustments</title>
+  <title>Solution 1 — Side-by-Side Columns | Attention Adjustments</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1459,6 +1459,38 @@
     }
   }
 
+  function applyStickyToNonPeriodColumns() {
+    const table = document.getElementById('mainTable');
+    table.querySelectorAll('tr').forEach(row => {
+      const cells = Array.from(row.children).filter(c => !c.classList.contains('period-col'));
+      let left = 0;
+      cells.forEach(cell => {
+        cell.style.position = 'sticky';
+        cell.style.left = left + 'px';
+        cell.style.zIndex = cell.tagName === 'TH' ? '4' : '2';
+        if (!cell.style.background || cell.style.background === 'transparent') {
+          cell.style.background = cell.tagName === 'TH' ? '#F9FAFB' : '#fff';
+        }
+        left += cell.offsetWidth || parseInt(cell.style.minWidth) || 110;
+      });
+    });
+    table.querySelectorAll('tr').forEach(row => {
+      const nonPeriod = Array.from(row.children).filter(c => !c.classList.contains('period-col'));
+      const last = nonPeriod[nonPeriod.length - 1];
+      if (last) last.style.boxShadow = '2px 0 6px rgba(0,0,0,0.08)';
+    });
+  }
+
+  function clearStickyFromNonPeriodColumns() {
+    const table = document.getElementById('mainTable');
+    table.querySelectorAll('th:not(.period-col), td:not(.period-col)').forEach(cell => {
+      cell.style.position = '';
+      cell.style.left = '';
+      cell.style.zIndex = '';
+      cell.style.boxShadow = '';
+    });
+  }
+
   function toggleFlightingColumns(on) {
     const table = document.getElementById('mainTable');
     const thead = table.querySelector('thead tr');
@@ -1468,6 +1500,7 @@
     if (!on) {
       // Remove all period-col elements
       table.querySelectorAll('.period-col').forEach(el => el.remove());
+      clearStickyFromNonPeriodColumns();
       return;
     }
 
@@ -1509,6 +1542,8 @@
         footTr.appendChild(td);
       });
     }
+    // Apply sticky to all non-period columns after DOM is settled
+    requestAnimationFrame(applyStickyToNonPeriodColumns);
   }
 
   function renderPeriodValues(mode) {
