@@ -1942,6 +1942,9 @@
     if (flightingOn) {
       toggleFlightingColumns(true);
     }
+
+    /* Collapse sidebar when both toggles are ON */
+    updateSidebarForToggles();
   }
 
   attToggle.addEventListener('change', applyAttentionState);
@@ -1955,7 +1958,22 @@
     document.getElementById('chartSegCtrl').style.display = flightingOn ? 'flex' : 'none';
     /* add/remove period columns */
     toggleFlightingColumns(flightingOn);
+    /* collapse sidebar when both toggles are ON; restore when flighting turns OFF */
+    updateSidebarForToggles();
   });
+
+  function updateSidebarForToggles() {
+    const shouldCollapse = attentionOn && flightingOn;
+    if (shouldCollapse && !sidebarCollapsed) {
+      sidebarCollapsed = true;
+      sidebar.classList.add('collapsed');
+      collapseBtn.textContent = '›';
+    } else if (!shouldCollapse && sidebarCollapsed) {
+      sidebarCollapsed = false;
+      sidebar.classList.remove('collapsed');
+      collapseBtn.textContent = '‹';
+    }
+  }
 
   /* ═══════════════════════════════════════════════
      FLIGHTING SUMMARY TABS
