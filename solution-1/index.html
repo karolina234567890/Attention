@@ -1502,14 +1502,14 @@
 
       /* Cum. Reach @1+ */
       if (attentionOn && !row.noAtt) {
-        html += `<td><span class="cell-adj-val">${fmtPct(adj.cumReachAdj)}</span><span class="cell-orig-sub">${row.cumReachOrig.toFixed(1)}</span></td>`;
+        html += `<td><span class="cell-adj-val">${fmtPct(adj.cumReachAdj)}</span></td>`;
       } else {
         html += `<td>${fmtPct(row.cumReachOrig)}</td>`;
       }
 
       /* Reach w. Decay @1+ */
       if (attentionOn && !row.noAtt) {
-        html += `<td><span class="cell-adj-val">${fmtPct(adj.decayAdj)}</span><span class="cell-orig-sub">${row.decayOrig.toFixed(1)}</span></td>`;
+        html += `<td><span class="cell-adj-val">${fmtPct(adj.decayAdj)}</span></td>`;
       } else {
         html += `<td>${fmtPct(row.decayOrig)}</td>`;
       }
@@ -1572,14 +1572,14 @@
 
     /* Cum Reach */
     if (attentionOn) {
-      html += `<td><span class="cell-adj-val">${fmtPct(cumAdjTotal)}</span><span class="cell-orig-sub">${cumOrigTotal.toFixed(1)}</span></td>`;
+      html += `<td><span class="cell-adj-val">${fmtPct(cumAdjTotal)}</span></td>`;
     } else {
       html += `<td>${fmtPct(cumOrigTotal)}</td>`;
     }
 
     /* Decay */
     if (attentionOn) {
-      html += `<td><span class="cell-adj-val">${fmtPct(decAdjTotal)}</span><span class="cell-orig-sub">${decOrigTotal.toFixed(1)}</span></td>`;
+      html += `<td><span class="cell-adj-val">${fmtPct(decAdjTotal)}</span></td>`;
     } else {
       html += `<td>${fmtPct(decOrigTotal)}</td>`;
     }
